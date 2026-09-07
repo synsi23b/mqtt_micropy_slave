@@ -1,0 +1,22 @@
+[project]
+name = "mqtt_micropy_slave"
+version = "0.1.0"
+description = "MicroPython MQTT edge slave for physical Home Assistant routines (AS608 fingerprint reader & solenoid door control)"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "paho-mqtt>=2.0.0",
+    "mpremote>=1.22.0",
+    "pyserial>=3.5"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+pythonpath = [".", "src"]

@@ -216,3 +216,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# MicroPython MQTT Slave Credentials & Secrets
+config.json
+secrets.json
+.env
+
+# Mosquitto runtime data
+mosquitto/data/
+mosquitto/log/

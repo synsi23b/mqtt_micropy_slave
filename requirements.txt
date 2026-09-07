@@ -1,0 +1,5 @@
+paho-mqtt>=2.0.0
+mpremote>=1.22.0
+pyserial>=3.5
+pytest>=8.0.0
+pytest-asyncio>=0.23.0

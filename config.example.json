@@ -1,0 +1,97 @@
+{
+  "device": {
+    "id": "esp32_door_slave_01",
+    "name": "Front Door Edge Slave",
+    "heartbeat_interval_s": 30
+  },
+  "wifi": {
+    "ssid": "YOUR_WIFI_SSID",
+    "password": "YOUR_WIFI_PASSWORD",
+    "connect_timeout_s": 20,
+    "max_retries": 5
+  },
+  "mqtt": {
+    "host": "192.168.1.100",
+    "port": 1883,
+    "user": "",
+    "password": "",
+    "keepalive": 60,
+    "base_topic": "slave/front_door",
+    "ha_discovery_prefix": "homeassistant"
+  },
+  "hardware": {
+    "solenoid": {
+      "pin": 23,
+      "active_high": true,
+      "default_pulse_ms": 3000,
+      "max_pulse_ms": 8000
+    },
+    "buzzer": {
+      "pin": 19,
+      "active_high": true
+    },
+    "led_status": {
+      "pin": 2,
+      "active_high": true
+    },
+    "door_sensor": {
+      "pin": 4,
+      "pull_up": true,
+      "active_low": true
+    },
+    "as608": {
+      "uart_id": 2,
+      "tx_pin": 17,
+      "rx_pin": 16,
+      "baudrate": 57600,
+      "password": 0,
+      "address": 4294967295,
+      "wak_pin": 18,
+      "use_wak": false
+    }
+  },
+  "routines": {
+    "door_unlock": [
+      {
+        "action": "pulse",
+        "pin": "buzzer",
+        "duration_ms": 120
+      },
+      {
+        "action": "pulse",
+        "pin": "solenoid",
+        "duration_ms": 3000
+      }
+    ],
+    "door_lock": [
+      {
+        "action": "digital_write",
+        "pin": "solenoid",
+        "state": 0
+      }
+    ],
+    "chime_success": [
+      {
+        "action": "pulse",
+        "pin": "buzzer",
+        "duration_ms": 100
+      },
+      {
+        "action": "delay",
+        "duration_ms": 80
+      },
+      {
+        "action": "pulse",
+        "pin": "buzzer",
+        "duration_ms": 150
+      }
+    ],
+    "chime_error": [
+      {
+        "action": "pulse",
+        "pin": "buzzer",
+        "duration_ms": 350
+      }
+    ]
+  }
+}
