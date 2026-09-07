@@ -39,6 +39,9 @@ def cmd_set_credentials(args):
     if "device" not in cfg:
         cfg["device"] = {}
 
+    if "ota" not in cfg:
+        cfg["ota"] = {}
+
     if args.ssid is not None:
         cfg["wifi"]["ssid"] = args.ssid
     if args.wifi_pass is not None:
@@ -55,9 +58,17 @@ def cmd_set_credentials(args):
         cfg["device"]["id"] = args.device_id
         if not cfg.get("mqtt", {}).get("base_topic"):
             cfg["mqtt"]["base_topic"] = f"slave/{args.device_id}"
+    if args.ota_url is not None:
+        cfg["ota"]["manifest_url"] = args.ota_url
+        cfg["ota"]["enabled"] = True
 
     save_config(cfg)
     print("Credentials updated successfully:")
+    print(f"  Device ID: {cfg.get('device', {}).get('id')}")
+    print(f"  Wi-Fi SSID: {cfg.get('wifi', {}).get('ssid')}")
+    print(f"  MQTT Host: {cfg.get('mqtt', {}).get('host')}:{cfg.get('mqtt', {}).get('port')}")
+    if cfg.get("ota", {}).get("manifest_url"):
+        print(f"  OTA Manifest URL: {cfg['ota']['manifest_url']}")
     print(f"  Device ID: {cfg.get('device', {}).get('id')}")
     print(f"  Wi-Fi SSID: {cfg.get('wifi', {}).get('ssid')}")
     print(f"  MQTT Host: {cfg.get('mqtt', {}).get('host')}:{cfg.get('mqtt', {}).get('port')}")
@@ -122,6 +133,7 @@ def main():
     p_cred.add_argument("--mqtt-user", help="MQTT Username (optional)")
     p_cred.add_argument("--mqtt-pass", help="MQTT Password (optional)")
     p_cred.add_argument("--device-id", help="Device ID")
+    p_cred.add_argument("--ota-url", help="HTTP URL to manifest.json on Nginx server")
     p_cred.set_defaults(func=cmd_set_credentials)
 
     # sync

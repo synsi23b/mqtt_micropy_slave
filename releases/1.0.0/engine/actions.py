@@ -56,11 +56,6 @@ class ActionExecutionContext:
             if comp is not None:
                 return comp
 
-        if target_id == "solenoid" and self.solenoid:
-            return self.solenoid
-        if target_id == "as608" and self.as608:
-            return self.as608
-
         # Check in legacy pins dict
         if target_id in self.pins:
             return self.pins[target_id]

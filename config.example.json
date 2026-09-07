@@ -1,6 +1,6 @@
 {
   "device": {
-    "id": "esp32_door_slave_01",
+    "id": "esp32_front_door",
     "name": "Front Door Edge Slave",
     "heartbeat_interval_s": 30
   },
@@ -19,61 +19,72 @@
     "base_topic": "slave/front_door",
     "ha_discovery_prefix": "homeassistant"
   },
-  "hardware": {
-    "solenoid": {
+  "ota": {
+    "enabled": true,
+    "manifest_url": "http://192.168.1.50:8080/firmware/manifest.json",
+    "check_on_boot": true,
+    "check_interval_s": 86400
+  },
+  "components": {
+    "door_bolt": {
+      "type": "solenoid",
       "pin": 23,
       "active_high": true,
       "default_pulse_ms": 3000,
       "max_pulse_ms": 8000
     },
     "buzzer": {
+      "type": "digital_out",
       "pin": 19,
       "active_high": true
     },
     "led_status": {
+      "type": "digital_out",
       "pin": 2,
       "active_high": true
     },
-    "door_sensor": {
+    "door_contact": {
+      "type": "digital_in",
       "pin": 4,
-      "pull_up": true,
-      "active_low": true
+      "pull": "up",
+      "invert": true,
+      "report_changes": true,
+      "ha_device_class": "door"
     },
-    "as608": {
+    "fingerprint": {
+      "type": "as608",
       "uart_id": 2,
       "tx_pin": 17,
       "rx_pin": 16,
       "baudrate": 57600,
       "password": 0,
-      "address": 4294967295,
-      "wak_pin": 18,
-      "use_wak": false
+      "address": 4294967295
     }
   },
   "routines": {
     "door_unlock": [
       {
         "action": "pulse",
-        "pin": "buzzer",
+        "target": "buzzer",
         "duration_ms": 120
       },
       {
         "action": "pulse",
-        "pin": "solenoid",
+        "target": "door_bolt",
         "duration_ms": 3000
       }
     ],
     "door_lock": [
       {
         "action": "digital_write",
-        "pin": "solenoid",
+        "target": "door_bolt",
         "state": 0
       }
     ],
     "chime_success": [
       {
         "action": "pulse",
-        "pin": "buzzer",
+        "target": "buzzer",
         "duration_ms": 100
       },
       {
@@ -82,15 +93,8 @@
       },
       {
         "action": "pulse",
-        "pin": "buzzer",
+        "target": "buzzer",
         "duration_ms": 150
-      }
-    ],
-    "chime_error": [
-      {
-        "action": "pulse",
-        "pin": "buzzer",
-        "duration_ms": 350
       }
     ]
   }

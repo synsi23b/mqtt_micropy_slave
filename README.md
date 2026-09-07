@@ -1,179 +1,230 @@
-# MicroPython MQTT Slave (AS608 Fingerprint & Solenoid Door Controller)
+# MicroPython Universal MQTT Edge Slave (OTA & Dynamic Hardware Framework)
 
-A robust MicroPython edge firmware for ESP32 devices that executes physical jobs over MQTT:
-- **AS608 Optical Fingerprint Reader**: UART communication for onboard image capture, 1-to-N template search, guided enrollment, and deletion. Emits scan events (`finger_id`, confidence) over MQTT to be mapped to users and authorization by an external app or Home Assistant.
-- **Solenoid Door Locks**: Reliably pulsed GPIO control with hardware safety watchdogs so coils never overheat.
-- **Home Assistant Integration**: Hybrid MQTT Auto-Discovery for status, health, abort controls, and routine triggers.
+A flexible, production-ready MicroPython edge firmware for ESP32 devices that executes physical jobs orchestrated over MQTT.
+
+Features:
+- **Dynamic Hardware Registry**: Zero hardcoded pins. Define any combination of solenoids, servos (SwitchBot-style robotic pressers), digital inputs (status LEDs of dumb appliances, reed switches), analog inputs, and UART peripherals (AS608 optical fingerprint reader) directly in `config.json`.
+- **Wi-Fi Over-The-Air (OTA) Updates**: Update remote ESP32 devices over Wi-Fi from an Nginx firmware server. Built-in release packaging and SCP publishing tool with atomic file replacement and rollback safety.
+- **Home Assistant Integration**: Auto-discovers binary sensors (status LEDs), sensors (analogs), routine buttons, emergency abort controls, and OTA update triggers.
 
 ---
 
-## 1. System Architecture & Flow
+## 1. Dynamic Hardware Component Modeling
+
+Devices configure their attached hardware dynamically under `components` in `config.json`. Drivers and background tasks are only started for components declared on that specific board.
+
+### Supported Component Types
+
+| Type | Target Hardware | Typical Configuration Parameters |
+|------|-----------------|----------------------------------|
+| `solenoid` | Door lock bolt, water valve | `pin`, `active_high`, `default_pulse_ms`, `max_pulse_ms` |
+| `servo` | SwitchBot button presser, mechanical lever | `pin`, `min_us`, `max_us`, `max_angle` |
+| `digital_in` | Dumb appliance status LED, reed switch, button | `pin`, `pull` (`"up"`/`"down"`), `invert`, `report_changes`, `ha_device_class` |
+| `analog_in` | Light sensor, voltage divider, analog water level | `pin`, `report_interval_s`, `ha_device_class` |
+| `digital_out` | Buzzer, indicator LED, simple relay | `pin`, `active_high`, `initial_state` |
+| `as608` | Optical fingerprint reader | `uart_id`, `tx_pin`, `rx_pin`, `baudrate` |
+
+---
+
+### Example Profiles in `config.json`
+
+#### Profile A: Door Controller (Solenoid + AS608 Fingerprint + Buzzer)
+```json
+{
+  "components": {
+    "door_bolt": {
+      "type": "solenoid",
+      "pin": 23,
+      "active_high": true,
+      "default_pulse_ms": 3000,
+      "max_pulse_ms": 8000
+    },
+    "buzzer": {
+      "type": "digital_out",
+      "pin": 19,
+      "active_high": true
+    },
+    "fingerprint": {
+      "type": "as608",
+      "uart_id": 2,
+      "tx_pin": 17,
+      "rx_pin": 16,
+      "baudrate": 57600
+    }
+  },
+  "routines": {
+    "door_unlock": [
+      {"action": "pulse", "target": "buzzer", "duration_ms": 120},
+      {"action": "pulse", "target": "door_bolt", "duration_ms": 3000}
+    ],
+    "door_lock": [
+      {"action": "digital_write", "target": "door_bolt", "state": 0}
+    ]
+  }
+}
+```
+
+#### Profile B: Robotic SwitchBot (Coffee Machine / Wall Switch Presser)
+```json
+{
+  "components": {
+    "coffee_presser": {
+      "type": "servo",
+      "pin": 25,
+      "min_us": 500,
+      "max_us": 2500
+    }
+  },
+  "routines": {
+    "press_coffee_button": [
+      {"action": "servo_set", "target": "coffee_presser", "angle": 75},
+      {"action": "delay", "duration_ms": 400},
+      {"action": "servo_set", "target": "coffee_presser", "angle": 0}
+    ]
+  }
+}
+```
+
+#### Profile C: Dumb Appliance Monitor (Washing Machine / Dryer Status LED Reader)
+```json
+{
+  "components": {
+    "washer_running_led": {
+      "type": "digital_in",
+      "pin": 34,
+      "pull": "up",
+      "invert": true,
+      "report_changes": true,
+      "ha_device_class": "running"
+    },
+    "washer_done_buzzer_sense": {
+      "type": "digital_in",
+      "pin": 35,
+      "pull": "down",
+      "report_changes": true
+    }
+  }
+}
+```
+*When `report_changes: true` is configured, the ESP32 automatically monitors the pin, publishes state changes to `slave/<device_id>/input/<component_id>`, and auto-discovers a `binary_sensor` in Home Assistant!*
+
+---
+
+## 2. Wi-Fi Over-The-Air (OTA) Update System
+
+The firmware updates itself over Wi-Fi by fetching a `manifest.json` from your local Nginx server.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor User
-    participant ESP as ESP32 Slave
-    participant AS608 as AS608 Sensor (UART)
-    participant Broker as MQTT Broker
-    participant Auth as Auth / Web App
-    participant Sol as Solenoid Lock
+    actor Dev as Developer
+    participant Tool as ota_manager.py
+    participant Nginx as Nginx Server (LAN)
+    participant ESP as ESP32 Edge Device
+    participant HA as Home Assistant
 
-    Note over User,Auth: Day-to-Day Access Flow
-    User->>AS608: Places finger on sensor
-    ESP->>AS608: search_once()
-    AS608-->>ESP: Match Found (Slot 12, Score 115)
-    ESP->>Broker: Publish slave/front_door/events {"event":"fingerprint_scanned","finger_id":12}
-    Broker->>Auth: Delivers event
-    Note over Auth: Maps Slot 12 -> Alice<br/>Checks permissions
-    Auth->>Broker: Publish slave/front_door/job/run {"job":"door_unlock"}
-    Broker->>ESP: Receives door_unlock
-    ESP->>Sol: Energizes solenoid (3000ms pulse)
-    Sol-->>User: Door unlatches
-    ESP->>Sol: De-energizes coil (safe lock)
-    ESP->>Broker: Publish slave/front_door/status {"state":"completed"}
+    Dev->>Tool: package --version 1.1.0
+    Note over Tool: Hashes src/ files,<br/>builds releases/1.1.0/ + manifest.json
+    Dev->>Tool: publish --host pi@192.168.1.50 --path /var/www/firmware
+    Tool->>Nginx: SCP releases to /var/www/firmware/
+    
+    alt Check via MQTT / HA
+        HA->>ESP: slave/<device_id>/ota/update
+    else Check on Boot / Periodic
+        ESP->>ESP: Timer fired
+    end
+
+    ESP->>Nginx: GET /firmware/manifest.json
+    Nginx-->>ESP: manifest (version: 1.1.0)
+    Note over ESP: 1.1.0 > local 1.0.0<br/>Downloads .py files to .new staging
+    ESP->>Nginx: GET /firmware/1.1.0/main.py
+    Note over ESP: All files verified -> Atomic rename<br/>Updates version.json -> Reboots
 ```
 
 ---
 
-## 2. Interactive Multi-Scan Enrollment Architecture
+### Setting Up the Nginx Firmware Server
 
-For high reliability, optical fingerprint sensors require multiple samples per finger (e.g. 5 scans at slight angle variations) across 2 fingers (left and right):
+An example standalone Nginx service is included in `nginx/`:
 
-- **Smartphone Web App (Orchestrator)**:
-  - User visits a locally hosted web page on their smartphone and enters their name ("Alice").
-  - Web App allocates template slots in the AS608 (e.g., slots 10–14 for left index, 15–19 for right index).
-  - Web App displays guided visual instructions:
-    * *"Sample 1 of 5: Place left index finger flat on sensor..."*
-    * *"Lift finger..."*
-    * *"Sample 2 of 5: Place finger again tilted slightly to the right..."*
-  - For each sample, the web app triggers an atomic `enroll_step` on the ESP32.
-- **ESP32 Edge Slave (Physical Executor)**:
-  - Executes `enroll_step(slot_id)`.
-  - Gives audio/visual feedback (buzzer chirp on touch, status LED).
-  - Enforces **finger-lift detection** between scans to ensure the user physically lifts and re-places their finger.
-  - Streams real-time state events back to MQTT (`waiting_for_finger`, `captured`, `waiting_for_lift`, `stored`).
-
----
-
-## 3. Hardware & Wiring
-
-All signals between the ESP32 and AS608 operate at **3.3V logic**.
-
-| Peripheral | Signal | ESP32 Pin | Notes |
-|------------|--------|-----------|-------|
-| **AS608** | VCC | 3.3V / 5V | Check module voltage specs (many accept 3.3V - 5V) |
-| **AS608** | GND | GND | Common ground |
-| **AS608** | TXD | GPIO 16 (RX2) | Connect sensor TX to ESP32 RX |
-| **AS608** | RXD | GPIO 17 (TX2) | Connect sensor RX to ESP32 TX |
-| **AS608** | WAK | GPIO 18 (In) | Optional touch interrupt / wake pin |
-| **Solenoid Gate** | Control | GPIO 23 (Out) | Connect to MOSFET gate or relay input |
-| **Buzzer** | Signal | GPIO 19 (Out) | Active piezo buzzer |
-| **Status LED** | Signal | GPIO 2 (Out) | Onboard / external indicator LED |
-
-> [!CAUTION]
-> **Flyback Diode Requirement**: When driving an inductive 12V solenoid lock, you MUST place a flyback diode (e.g., 1N4007) across the solenoid terminals (cathode to +12V, anode to MOSFET drain/ground) to clamp inductive kickback and protect the circuit.
-
----
-
-## 4. Configuration & Credential Management
-
-Credentials and secrets are kept strictly out of git:
-1. `config.example.json` is tracked in git as the reference schema.
-2. `config.json`, `secrets.json`, and `.env` are listed in `.gitignore`.
-3. Use the deployment tool to configure credentials locally:
+1. Start Nginx on your server / Raspberry Pi:
    ```bash
-   python tools/deploy.py set-credentials \
-     --ssid "HomeWiFi" \
-     --wifi-pass "SecretPassword" \
-     --mqtt-host "192.168.1.100" \
-     --mqtt-port 1883 \
-     --device-id "esp32_front_door"
+   cd nginx
+   docker compose -f docker-compose.nginx.yml up -d
+   ```
+   *Serves files from `./data/` on port `8080` at `http://<server-ip>:8080/firmware/`.*
+
+---
+
+### Packaging & Publishing Firmware Releases
+
+1. **Package a Release**:
+   ```bash
+   python tools/ota_manager.py package --version 1.1.0
+   ```
+   This generates `releases/1.1.0/` and updates `releases/manifest.json` with SHA-256 checksums.
+
+2. **Publish via SCP**:
+   Upload the packaged release directly to your Nginx host over SSH:
+   ```bash
+   python tools/ota_manager.py publish \
+     --host pi@192.168.1.50 \
+     --path /var/www/firmware
    ```
 
 ---
 
-## 5. Remote Docker & Mosquitto Integration Testing
+## 3. Initial Board Flashing & Configuration
 
-If your Docker daemon runs on a remote server or Raspberry Pi accessed via SSH, local Windows file paths cannot be bind-mounted into the remote container.
-
-To solve this, `docker-compose.yml` uses a **self-contained entrypoint** that creates the Mosquitto configuration dynamically inside the container:
+During initial setup, credentials and the OTA URL are saved locally into git-ignored `config.json` and flashed via USB serial:
 
 ```bash
-# Start Mosquitto test broker
-docker compose up -d
+# 1. Set Wi-Fi, MQTT, and OTA manifest URL
+python tools/deploy.py set-credentials \
+  --ssid "HomeWiFi" \
+  --wifi-pass "SecretPassword" \
+  --mqtt-host "192.168.1.100" \
+  --device-id "esp32_front_door" \
+  --ota-url "http://192.168.1.50:8080/firmware/manifest.json"
 
-# Stop broker
-docker compose down
-```
-
-### Specifying the Remote Broker IP
-Set the `MQTT_BROKER_HOST` environment variable to point tests to your remote broker:
-```bash
-# Windows PowerShell
-$env:MQTT_BROKER_HOST = "192.168.1.100"
-.venv\Scripts\python.exe -m pytest -v tests/integration/test_mqtt_integration.py
-```
-
----
-
-## 6. Multi-Tier Testing Hierarchy
-
-### Tier 1: Desktop Unit Tests (No Hardware Needed)
-Runs on your local PC with mock MicroPython hardware (`machine.Pin`, `machine.UART`, `uasyncio`):
-```bash
-.venv\Scripts\python.exe -m pytest -v tests/
-```
-Tests:
-- AS608 packet encoder/decoder and checksum verification
-- Action Registry (`digital_write`, `pulse`, `servo_set`, `as608_search`, etc.)
-- Job Runner state machine, single-job locking, timeouts, and emergency abort safety
-- Home Assistant MQTT Discovery payload generation
-
-### Tier 2: End-to-End Simulation Flow
-Simulates the entire loop from finger touch $\rightarrow$ MQTT event $\rightarrow$ Auth App verification $\rightarrow$ Solenoid pulse:
-```bash
-.venv\Scripts\python.exe -m pytest -v tests/integration/test_door_flow.py
-```
-
-### Tier 3: Live Mosquitto Integration Tests
-Connects a simulated edge client to the live Eclipse-Mosquitto container to test LWT availability, messaging, and abort commands.
-
-### Tier 4: Raspberry Pi Hardware-in-the-Loop (HIL)
-Runs on a Raspberry Pi wired to the ESP32 to measure physical GPIO pulse widths (solenoid timing) and verify UART packet exchanges. See [wiring_guide.md](file:///c:/Users/synsi/repos/mqtt_micropy_slave/tests/hil/wiring_guide.md).
-
----
-
-## 7. Deploying to the ESP32 Board
-
-Sync the firmware and your local `config.json` to the connected ESP32:
-```bash
-# Auto-detect serial port and upload
-python tools/deploy.py sync
-
-# Or specify port explicitly
+# 2. Flash firmware and config to ESP32
 python tools/deploy.py sync --port COM3
-```
 
-Open a serial monitoring REPL:
-```bash
+# 3. Monitor serial output
 python tools/deploy.py monitor --port COM3
 ```
 
-List files on the ESP32 flash:
+---
+
+## 4. Multi-Tier Testing Hierarchy
+
+Run all unit tests in the virtual environment:
 ```bash
-python tools/deploy.py ls --port COM3
+.venv\Scripts\python.exe -m pytest -v tests/
 ```
+
+### Test Coverage:
+1. **Dynamic Components (`tests/test_components.py`)**: Tests instantiating Door, SwitchBot, and Appliance Monitor profiles.
+2. **Digital I/O (`tests/test_digital_io.py`)**: Tests debouncing, signal inversion, and input change detection.
+3. **OTA Engine (`tests/test_ota.py`)**: Tests semantic version comparison, manifest fetching, atomic file replacement, and rollback guarantees.
+4. **AS608 Fingerprint (`tests/test_as608.py`)**: Tests framing, checksums, search, and multi-sample enrollment.
+5. **Job Runner (`tests/test_job_runner.py`)**: Tests single-job locking and emergency abort teardown.
+6. **End-to-End Simulation (`tests/integration/test_door_flow.py`)**: Simulates complete finger scan $\rightarrow$ auth $\rightarrow$ door unlock flow.
+7. **Live Mosquitto (`tests/integration/test_mqtt_integration.py`)**: Connects to live broker at `MQTT_BROKER_HOST`.
+8. **Raspberry Pi HIL (`tests/hil/test_pi_hil.py`)**: Physical GPIO pulse timing verification on real hardware.
 
 ---
 
-## 8. MQTT Topic Reference
+## 5. MQTT Topic Reference
 
 | Direction | Topic | Payload Example | Purpose |
 |-----------|-------|-----------------|---------|
 | ESP32 $\rightarrow$ Broker | `slave/<device_id>/availability` | `online` / `offline` | LWT device availability |
-| ESP32 $\rightarrow$ Broker | `slave/<device_id>/status` | `{"state":"running","job_id":"door_unlock","step":1}` | Live execution state |
-| ESP32 $\rightarrow$ Broker | `slave/<device_id>/events` | `{"event":"fingerprint_scanned","finger_id":12,"confidence":115}` | Scan events for auth app |
-| Broker $\rightarrow$ ESP32 | `slave/<device_id>/job/run` | `{"job":"door_unlock"}` or `{"steps":[...]}` | Trigger routine or ad-hoc sequence |
-| Broker $\rightarrow$ ESP32 | `slave/<device_id>/job/abort` | `{"reason":"emergency_stop"}` | Emergency halt and failsafe reset |
+| ESP32 $\rightarrow$ Broker | `slave/<device_id>/status` | `{"state":"running","job_id":"door_unlock"}` | Execution state |
+| ESP32 $\rightarrow$ Broker | `slave/<device_id>/events` | `{"event":"fingerprint_scanned","finger_id":12}` | Event stream |
+| ESP32 $\rightarrow$ Broker | `slave/<device_id>/input/<comp_id>` | `1` or `0` | Live input pin state |
+| Broker $\rightarrow$ ESP32 | `slave/<device_id>/job/run` | `{"job":"door_unlock"}` or `{"steps":[...]}` | Run routine or ad-hoc job |
+| Broker $\rightarrow$ ESP32 | `slave/<device_id>/job/abort` | `{"reason":"emergency_stop"}` | Emergency halt & failsafe reset |
+| Broker $\rightarrow$ ESP32 | `slave/<device_id>/ota/check` | `{}` | Query remote OTA manifest |
+| Broker $\rightarrow$ ESP32 | `slave/<device_id>/ota/update` | `{}` | Trigger OTA update & reboot |
 | ESP32 $\rightarrow$ Broker | `homeassistant/<component>/<device_id>/...` | JSON Discovery Payload | Auto-discovery entities for Home Assistant |

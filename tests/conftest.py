@@ -15,11 +15,11 @@ class MockPin:
     PULL_UP = 1
     PULL_DOWN = 2
 
-    def __init__(self, pin, mode=1, value=0, pull=-1):
+    def __init__(self, pin, mode=1, pull=-1, value=0):
         self.pin = pin
         self.mode = mode
-        self._val = value
         self.pull = pull
+        self._val = value
         self.history = [value]
 
     def value(self, val=None):

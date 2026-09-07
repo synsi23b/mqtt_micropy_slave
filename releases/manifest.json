@@ -1,0 +1,106 @@
+{
+  "version": "1.0.0",
+  "release_date": "2026-09-07T04:40:33.201411Z",
+  "files": {
+    "boot.py": {
+      "url": "1.0.0/boot.py",
+      "sha256": "70aecbe65a8b0504a5cc3bfa5c160c22392b51c63aae3afbad0330dbd5f9dc23",
+      "size_bytes": 264
+    },
+    "config.py": {
+      "url": "1.0.0/config.py",
+      "sha256": "1f07203811b822294dee6362f4262f475fbbb9343fb659f42fd54570200f02fe",
+      "size_bytes": 7205
+    },
+    "main.py": {
+      "url": "1.0.0/main.py",
+      "sha256": "f90a8fb36ad86cbd5936df82ede3562ba7b80140d23607264856d4159f5edf33",
+      "size_bytes": 8883
+    },
+    "version.json": {
+      "url": "1.0.0/version.json",
+      "sha256": "ea78c88f763c4ba76c07b7510bb0f09a808d5d4549696d317bf5c118d467178c",
+      "size_bytes": 76
+    },
+    "drivers/analog_io.py": {
+      "url": "1.0.0/drivers/analog_io.py",
+      "sha256": "8b74961d2ced129c41a2ade61c91cd506d37abe993c8ccba04a731a777fc425a",
+      "size_bytes": 1789
+    },
+    "drivers/as608.py": {
+      "url": "1.0.0/drivers/as608.py",
+      "sha256": "a9d4d0e202a9a4c52ad806a6124c8afbacf99d773c509d82ff45c5c23d5aaa92",
+      "size_bytes": 10873
+    },
+    "drivers/digital_io.py": {
+      "url": "1.0.0/drivers/digital_io.py",
+      "sha256": "921f16f215702dac5fb580538c03c6db75455db507410340e710156928fa7047",
+      "size_bytes": 2867
+    },
+    "drivers/servo.py": {
+      "url": "1.0.0/drivers/servo.py",
+      "sha256": "468d7d6ba83d1dfe197b8edb08f6f6f1f3d80224539d59469b519d28e89810d2",
+      "size_bytes": 1712
+    },
+    "drivers/solenoid.py": {
+      "url": "1.0.0/drivers/solenoid.py",
+      "sha256": "a5ecd6658117c3e8755b2865586e767f4d803084f6771fbb4bc3c54082ef64e2",
+      "size_bytes": 2489
+    },
+    "drivers/__init__.py": {
+      "url": "1.0.0/drivers/__init__.py",
+      "sha256": "c5d82125e09f97b39e94ff3dd01ab2fa202d8ae4c425a3e8d1876bfdff318443",
+      "size_bytes": 18
+    },
+    "engine/actions.py": {
+      "url": "1.0.0/engine/actions.py",
+      "sha256": "97671ae44878b1f18177db2dc4336ee01a961cf862acc83ef60f408131f26cde",
+      "size_bytes": 10232
+    },
+    "engine/components.py": {
+      "url": "1.0.0/engine/components.py",
+      "sha256": "962dbf6922209829c73540113713970eab51830dbe186b24dca41f005936aafc",
+      "size_bytes": 4701
+    },
+    "engine/job_runner.py": {
+      "url": "1.0.0/engine/job_runner.py",
+      "sha256": "de93142e9f676d703405f6067c2a93dd70c9cfbfad8ecebfbdcea6fcb1b9ef4a",
+      "size_bytes": 6119
+    },
+    "engine/__init__.py": {
+      "url": "1.0.0/engine/__init__.py",
+      "sha256": "9dcf8a73dd34eac720ac6131d5ad0b08e3dcf4a9f08e810915a99018a2ed2840",
+      "size_bytes": 17
+    },
+    "ha/discovery.py": {
+      "url": "1.0.0/ha/discovery.py",
+      "sha256": "c6a30c6fb584e5600b9d71d101a86167ac5daa5395bef1320fca3f46228b5d5d",
+      "size_bytes": 7365
+    },
+    "ha/__init__.py": {
+      "url": "1.0.0/ha/__init__.py",
+      "sha256": "9e0394130151557b3d8cf3961ba98e7de0e5e359cc57f9313a2bd17d240b2f0f",
+      "size_bytes": 13
+    },
+    "net/mqtt.py": {
+      "url": "1.0.0/net/mqtt.py",
+      "sha256": "14874f02f6750a2420bc93ac56b183edb999fd67d227a3b2ee714c61359714e2",
+      "size_bytes": 8745
+    },
+    "net/ota.py": {
+      "url": "1.0.0/net/ota.py",
+      "sha256": "e5607c6e331e00fdde410ac930c91f9d9fe3a0bc58fe61b83089d0ef50b6252c",
+      "size_bytes": 7042
+    },
+    "net/wifi.py": {
+      "url": "1.0.0/net/wifi.py",
+      "sha256": "ecb5434f89b51bdc82cfb39492ca2693fd522d603c13e614a7993857aa1b291f",
+      "size_bytes": 2581
+    },
+    "net/__init__.py": {
+      "url": "1.0.0/net/__init__.py",
+      "sha256": "8d30aff85ef32e8ed6fbeb226170417be1440634496af51e745a36a4df4cd08e",
+      "size_bytes": 14
+    }
+  }
+}

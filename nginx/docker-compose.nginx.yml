@@ -1,0 +1,10 @@
+services:
+  nginx_firmware:
+    image: nginx:alpine
+    container_name: esp32_firmware_server
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./data:/var/www/firmware:ro
+    restart: unless-stopped
