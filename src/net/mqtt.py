@@ -19,6 +19,7 @@ class MQTTClientWrapper:
         self.client = None
         self._is_connected = False
         self._is_desktop = False
+        self._loop = None
 
         # Precompute standard topics
         self.topic_availability = "{}/availability".format(self.base_topic)
@@ -99,6 +100,16 @@ class MQTTClientWrapper:
 
     def _dispatch_message(self, topic, payload):
         if self.on_message_cb:
+            if self._is_desktop:
+                loop = self._loop
+                if not loop or not loop.is_running():
+                    try:
+                        loop = asyncio.get_running_loop()
+                    except (AttributeError, RuntimeError):
+                        pass
+                if loop and loop.is_running():
+                    asyncio.run_coroutine_threadsafe(self.on_message_cb(topic, payload), loop)
+                    return
             asyncio.create_task(self.on_message_cb(topic, payload))
 
     async def connect(self):
@@ -110,6 +121,15 @@ class MQTTClientWrapper:
             print("[MQTT] Mock/Dummy client active")
             self._is_connected = True
             return True
+
+        if self._is_desktop:
+            try:
+                self._loop = asyncio.get_running_loop()
+            except (AttributeError, RuntimeError):
+                try:
+                    self._loop = asyncio.get_event_loop()
+                except Exception:
+                    self._loop = None
 
         print("[MQTT] Connecting to broker {}:{}...".format(self.config.mqtt_host, self.config.mqtt_port))
 

@@ -8,8 +8,10 @@ import asyncio
 import os
 import sys
 
-# Ensure src/ is on python path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+# Ensure repo root and src/ are on python path
+repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, repo_root)
+sys.path.insert(0, os.path.join(repo_root, "src"))
 
 # Ensure mock machine is loaded
 import tests.conftest
