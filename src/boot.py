@@ -1,9 +1,8 @@
 """Board boot initialization for ESP32 MicroPython slave."""
 import gc
-import esp
-
-# Disable verbose OS debug output
 try:
+    # pyrefly: ignore [missing-import]
+    import esp
     esp.osdebug(None)
 except Exception:
     pass

@@ -1,6 +1,7 @@
 """End-to-End simulation of fingerprint scan -> auth decision -> door unlock execution."""
 import pytest
 import asyncio
+# pyrefly: ignore [missing-import]
 from machine import Pin, UART
 from config import Config
 from drivers.solenoid import SolenoidLock

@@ -3,6 +3,7 @@ import json
 import os
 
 try:
+    # pyrefly: ignore [missing-import]
     import uasyncio as asyncio
 except ImportError:
     import asyncio
@@ -174,6 +175,7 @@ class OTAClient:
             if auto_reboot:
                 print("[OTA] Rebooting device...")
                 try:
+                    # pyrefly: ignore [missing-import]
                     import machine
                     machine.reset()
                 except Exception:

@@ -1,6 +1,7 @@
 """Unit tests for JobRunner state machine, concurrency locking, and abort safety."""
 import pytest
 import asyncio
+# pyrefly: ignore [missing-import]
 from machine import Pin
 from config import Config
 from drivers.solenoid import SolenoidLock

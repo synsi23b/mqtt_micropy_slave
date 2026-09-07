@@ -1,5 +1,6 @@
 """Unit tests for AS608 optical fingerprint reader driver and protocol."""
 import pytest
+# pyrefly: ignore [missing-import]
 from machine import UART
 from drivers.as608 import AS608, build_packet, PID_ACK, CONFIRM_OK, CONFIRM_NOT_FOUND, CONFIRM_NO_FINGER
 

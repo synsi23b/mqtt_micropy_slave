@@ -2,11 +2,13 @@
 Targets dynamically declared components from ComponentManager or raw GPIO pins.
 """
 try:
+    # pyrefly: ignore [missing-import]
     import uasyncio as asyncio
 except ImportError:
     import asyncio
 
 try:
+    # pyrefly: ignore [missing-import]
     from machine import Pin
 except ImportError:
     class Pin:
@@ -190,6 +192,7 @@ class ActionRegistry:
         else:
             raw_pin = obj
         try:
+            # pyrefly: ignore [missing-import]
             from machine import PWM
             pwm = PWM(raw_pin, freq=freq, duty_u16=duty_u16)
         except Exception:

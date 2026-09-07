@@ -1,5 +1,6 @@
 """Unit tests for Dynamic ComponentManager across various device profiles."""
 import pytest
+# pyrefly: ignore [missing-import]
 from machine import Pin, UART
 from engine.components import ComponentManager
 

@@ -71,6 +71,7 @@ class ComponentManager:
 
         elif comp_type == "as608":
             try:
+                # pyrefly: ignore [missing-import]
                 from machine import UART
                 uart = UART(
                     spec.get("uart_id", 2),

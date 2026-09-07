@@ -1,10 +1,12 @@
 """Solenoid driver with hardware safety timeouts to prevent coil overheating."""
 try:
+    # pyrefly: ignore [missing-import]
     import uasyncio as asyncio
 except ImportError:
     import asyncio
 
 try:
+    # pyrefly: ignore [missing-import]
     from machine import Pin
 except ImportError:
     # Fallback mock for desktop/testing if not imported via conftest

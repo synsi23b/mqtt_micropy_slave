@@ -2,6 +2,7 @@
 import json
 
 try:
+    # pyrefly: ignore [missing-import]
     import uasyncio as asyncio
 except ImportError:
     import asyncio
@@ -35,6 +36,7 @@ class MQTTClientWrapper:
     def _create_client(self):
         # Try MicroPython umqtt first
         try:
+            # pyrefly: ignore [missing-import]
             from umqtt.simple import MQTTClient
             client = MQTTClient(
                 client_id=self.device_id,

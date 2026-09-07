@@ -1,5 +1,6 @@
 """MicroPython async driver for AS608 Optical Fingerprint Sensor over UART."""
 try:
+    # pyrefly: ignore [missing-import]
     import uasyncio as asyncio
 except ImportError:
     import asyncio

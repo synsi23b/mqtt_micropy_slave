@@ -1,5 +1,6 @@
 """Servo motor PWM driver for MicroPython."""
 try:
+    # pyrefly: ignore [missing-import]
     from machine import Pin, PWM
 except ImportError:
     class PWM:

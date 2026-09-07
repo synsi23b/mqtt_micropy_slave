@@ -1,5 +1,6 @@
 """Unit tests for Modular Action Registry."""
 import pytest
+# pyrefly: ignore [missing-import]
 from machine import Pin, UART
 from config import Config
 from drivers.solenoid import SolenoidLock

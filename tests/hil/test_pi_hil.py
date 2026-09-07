@@ -16,10 +16,12 @@ SOLENOID_SENSE_PIN = int(os.environ.get("PI_SOLENOID_PIN", "17"))
 def is_pi_hardware():
     """Detect if running on a real Raspberry Pi with GPIO access."""
     try:
+        # pyrefly: ignore [missing-import]
         import gpiod
         return True
     except ImportError:
         try:
+            # pyrefly: ignore [missing-import]
             import RPi.GPIO
             return True
         except ImportError:
@@ -39,6 +41,7 @@ def test_measure_solenoid_physical_pulse_width():
     and asserts timing accuracy.
     """
     import paho.mqtt.client as paho
+    # pyrefly: ignore [missing-import]
     import gpiod
 
     chip = gpiod.Chip("gpiochip4") if os.path.exists("/dev/gpiochip4") else gpiod.Chip("gpiochip0")

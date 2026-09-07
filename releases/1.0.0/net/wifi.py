@@ -1,5 +1,6 @@
 """Async Wi-Fi connection manager with exponential backoff reconnects."""
 try:
+    # pyrefly: ignore [missing-import]
     import uasyncio as asyncio
 except ImportError:
     import asyncio
@@ -19,6 +20,7 @@ class WiFiManager:
 
     def _init_interface(self):
         try:
+            # pyrefly: ignore [missing-import]
             import network
             self._wlan = network.WLAN(network.STA_IF)
             self._wlan.active(True)

@@ -1,10 +1,12 @@
 """Generic Digital I/O driver with inversion, debouncing, and change detection."""
 try:
+    # pyrefly: ignore [missing-import]
     import uasyncio as asyncio
 except ImportError:
     import asyncio
 
 try:
+    # pyrefly: ignore [missing-import]
     from machine import Pin
 except ImportError:
     class Pin:

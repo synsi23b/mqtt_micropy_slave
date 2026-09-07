@@ -1,5 +1,6 @@
 """Generic Analog ADC input driver with sample smoothing."""
 try:
+    # pyrefly: ignore [missing-import]
     from machine import Pin, ADC
 except ImportError:
     class ADC:

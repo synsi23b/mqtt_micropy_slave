@@ -1,5 +1,6 @@
 """Unit tests for DigitalInput and DigitalOutput drivers."""
 import pytest
+# pyrefly: ignore [missing-import]
 from machine import Pin
 from drivers.digital_io import DigitalInput, DigitalOutput
 

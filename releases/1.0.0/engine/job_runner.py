@@ -1,5 +1,6 @@
 """Job execution engine with single-job locking, timeouts, and emergency abort safety."""
 try:
+    # pyrefly: ignore [missing-import]
     import uasyncio as asyncio
 except ImportError:
     import asyncio

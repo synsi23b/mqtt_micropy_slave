@@ -2,11 +2,13 @@
 Targets dynamically declared components from ComponentManager or raw GPIO pins.
 """
 try:
+    # pyrefly: ignore [missing-import]
     import uasyncio as asyncio
 except ImportError:
     import asyncio
 
 try:
+    # pyrefly: ignore [missing-import]
     from machine import Pin
 except ImportError:
     class Pin:
@@ -55,6 +57,11 @@ class ActionExecutionContext:
             comp = self.components.get(target_id)
             if comp is not None:
                 return comp
+
+        if target_id == "solenoid" and self.solenoid:
+            return self.solenoid
+        if target_id == "as608" and self.as608:
+            return self.as608
 
         # Check in legacy pins dict
         if target_id in self.pins:
@@ -185,6 +192,7 @@ class ActionRegistry:
         else:
             raw_pin = obj
         try:
+            # pyrefly: ignore [missing-import]
             from machine import PWM
             pwm = PWM(raw_pin, freq=freq, duty_u16=duty_u16)
         except Exception:

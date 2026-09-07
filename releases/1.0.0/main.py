@@ -3,6 +3,7 @@ import json
 import gc
 
 try:
+    # pyrefly: ignore [missing-import]
     import uasyncio as asyncio
 except ImportError:
     import asyncio
