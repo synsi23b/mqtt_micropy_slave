@@ -1,0 +1,285 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 700" width="100%" height="100%" style="background:#0f172a; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="mqttGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" />
+      <stop offset="100%" stop-color="#022c22" />
+    </linearGradient>
+    <linearGradient id="haGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="nginxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14532d" />
+      <stop offset="100%" stop-color="#052e16" />
+    </linearGradient>
+    <linearGradient id="toolsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#312e81" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+
+    <!-- Drop Shadows & Filters -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+
+    <!-- Marker / Arrows -->
+    <marker id="arrowCyan" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 0 1 L 7 4 L 0 7 z" fill="#06b6d4" />
+    </marker>
+    <marker id="arrowEmerald" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 0 1 L 7 4 L 0 7 z" fill="#10b981" />
+    </marker>
+    <marker id="arrowAmber" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 0 1 L 7 4 L 0 7 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arrowViolet" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 0 1 L 7 4 L 0 7 z" fill="#a855f7" />
+    </marker>
+  </defs>
+
+  <!-- Title Header -->
+  <g transform="translate(40, 25)">
+    <text x="0" y="24" fill="#f8fafc" font-size="22" font-weight="700" letter-spacing="0.5">ESP32 MicroPython Universal Edge Slave</text>
+    <text x="0" y="46" fill="#94a3b8" font-size="13">High-Level System Architecture &amp; Messaging Topology</text>
+  </g>
+
+  <!-- ==================== 1. EDGE DEVICE (ESP32) ==================== -->
+  <g transform="translate(40, 90)" filter="url(#shadow)">
+    <!-- Container Box -->
+    <rect width="360" height="570" rx="14" fill="url(#edgeGrad)" stroke="#38bdf8" stroke-width="2" stroke-opacity="0.7" />
+    
+    <!-- Header -->
+    <rect width="360" height="42" rx="14" fill="#0284c7" fill-opacity="0.25" />
+    <path d="M 0 28 Q 0 42 14 42 L 346 42 Q 360 42 360 28" fill="none" />
+    <circle cx="25" cy="21" r="7" fill="#38bdf8" />
+    <text x="42" y="26" fill="#f0f9ff" font-size="15" font-weight="700">ESP32 Edge Device (MicroPython)</text>
+
+    <!-- Sub-module: Dynamic Component Registry -->
+    <g transform="translate(20, 56)">
+      <rect width="320" height="110" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <text x="14" y="22" fill="#38bdf8" font-size="13" font-weight="600">Dynamic Hardware Registry</text>
+      <text x="14" y="40" fill="#94a3b8" font-size="11">Zero hardcoded pins • config.json profile</text>
+      
+      <!-- Component Pills -->
+      <rect x="14" y="52" width="66" height="22" rx="4" fill="#0369a1" fill-opacity="0.4" stroke="#0284c7" stroke-width="1" />
+      <text x="21" y="67" fill="#e0f2fe" font-size="10">Solenoid</text>
+      
+      <rect x="86" y="52" width="60" height="22" rx="4" fill="#0369a1" fill-opacity="0.4" stroke="#0284c7" stroke-width="1" />
+      <text x="96" y="67" fill="#e0f2fe" font-size="10">Servo</text>
+      
+      <rect x="152" y="52" width="74" height="22" rx="4" fill="#0369a1" fill-opacity="0.4" stroke="#0284c7" stroke-width="1" />
+      <text x="160" y="67" fill="#e0f2fe" font-size="10">Digital In/Out</text>
+
+      <rect x="232" y="52" width="74" height="22" rx="4" fill="#0369a1" fill-opacity="0.4" stroke="#0284c7" stroke-width="1" />
+      <text x="240" y="67" fill="#e0f2fe" font-size="10">Analog ADC</text>
+
+      <rect x="14" y="80" width="138" height="22" rx="4" fill="#0369a1" fill-opacity="0.4" stroke="#0284c7" stroke-width="1" />
+      <text x="20" y="95" fill="#e0f2fe" font-size="10">AS608 Fingerprint (UART)</text>
+
+      <rect x="158" y="80" width="148" height="22" rx="4" fill="#475569" fill-opacity="0.4" stroke="#64748b" stroke-width="1" />
+      <text x="166" y="95" fill="#cbd5e1" font-size="10">Fail-Safe All Reset</text>
+    </g>
+
+    <!-- Sub-module: Modular Actions & Job Runner -->
+    <g transform="translate(20, 180)">
+      <rect width="320" height="110" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <text x="14" y="22" fill="#38bdf8" font-size="13" font-weight="600">Job Runner &amp; Action Engine</text>
+      <text x="14" y="40" fill="#94a3b8" font-size="11">Single-job concurrency lock • Emergency abort</text>
+
+      <rect x="14" y="52" width="60" height="22" rx="4" fill="#1e3a8a" fill-opacity="0.5" stroke="#3b82f6" stroke-width="1" />
+      <text x="24" y="67" fill="#bfdbfe" font-size="10">Pulse</text>
+
+      <rect x="80" y="52" width="68" height="22" rx="4" fill="#1e3a8a" fill-opacity="0.5" stroke="#3b82f6" stroke-width="1" />
+      <text x="89" y="67" fill="#bfdbfe" font-size="10">Write/Set</text>
+
+      <rect x="154" y="52" width="60" height="22" rx="4" fill="#1e3a8a" fill-opacity="0.5" stroke="#3b82f6" stroke-width="1" />
+      <text x="166" y="67" fill="#bfdbfe" font-size="10">Delay</text>
+
+      <rect x="220" y="52" width="86" height="22" rx="4" fill="#1e3a8a" fill-opacity="0.5" stroke="#3b82f6" stroke-width="1" />
+      <text x="227" y="67" fill="#bfdbfe" font-size="10">AS608 Enroll</text>
+
+      <rect x="14" y="80" width="292" height="22" rx="4" fill="#7f1d1d" fill-opacity="0.4" stroke="#ef4444" stroke-width="1" />
+      <text x="56" y="95" fill="#fecaca" font-size="10">Emergency Abort: Instant low-side shutdown</text>
+    </g>
+
+    <!-- Sub-module: Wi-Fi & MQTT Client -->
+    <g transform="translate(20, 304)">
+      <rect width="320" height="96" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <text x="14" y="22" fill="#38bdf8" font-size="13" font-weight="600">Network &amp; Supervisor Loop</text>
+      <text x="14" y="40" fill="#94a3b8" font-size="11">Auto-reconnect • LWT Availability • Input Poller</text>
+      <text x="14" y="60" fill="#cbd5e1" font-size="11">✓ Background Input Change Detection</text>
+      <text x="14" y="78" fill="#cbd5e1" font-size="11">✓ Background AS608 Finger Touch Listener</text>
+    </g>
+
+    <!-- Sub-module: OTA Update Engine -->
+    <g transform="translate(20, 414)">
+      <rect width="320" height="80" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <text x="14" y="22" fill="#10b981" font-size="13" font-weight="600">Wi-Fi OTA Engine (net/ota.py)</text>
+      <text x="14" y="40" fill="#94a3b8" font-size="11">Semver compare • SHA-256 staging (.new)</text>
+      <text x="14" y="62" fill="#a7f3d0" font-size="11">Atomic rename &amp; auto-rollback protection</text>
+    </g>
+
+    <!-- Sub-module: HA Auto-Discovery Generator -->
+    <g transform="translate(20, 506)">
+      <rect width="320" height="48" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <text x="14" y="20" fill="#c084fc" font-size="12" font-weight="600">Home Assistant Discovery Engine</text>
+      <text x="14" y="36" fill="#94a3b8" font-size="10">Auto-publishes MQTT entities for sensors, buttons &amp; OTA</text>
+    </g>
+  </g>
+
+  <!-- ==================== 2. MQTT BROKER (MOSQUITTO) ==================== -->
+  <g transform="translate(440, 150)" filter="url(#shadow)">
+    <!-- Container -->
+    <rect width="260" height="420" rx="14" fill="url(#mqttGrad)" stroke="#10b981" stroke-width="2" stroke-opacity="0.8" />
+    
+    <!-- Header -->
+    <rect width="260" height="42" rx="14" fill="#059669" fill-opacity="0.3" />
+    <circle cx="22" cy="21" r="7" fill="#10b981" />
+    <text x="38" y="26" fill="#ecfdf5" font-size="15" font-weight="700">MQTT Broker (Mosquitto)</text>
+
+    <!-- Topics Section -->
+    <g transform="translate(15, 54)">
+      <text x="5" y="16" fill="#6ee7b7" font-size="12" font-weight="600">PUBLISHED BY SLAVE (Tx)</text>
+      
+      <rect x="5" y="26" width="220" height="28" rx="5" fill="#064e3b" stroke="#047857" stroke-width="1" />
+      <text x="14" y="44" fill="#a7f3d0" font-size="11" font-family="monospace">slave/&lt;id&gt;/availability</text>
+
+      <rect x="5" y="60" width="220" height="28" rx="5" fill="#064e3b" stroke="#047857" stroke-width="1" />
+      <text x="14" y="78" fill="#a7f3d0" font-size="11" font-family="monospace">slave/&lt;id&gt;/status</text>
+
+      <rect x="5" y="94" width="220" height="28" rx="5" fill="#064e3b" stroke="#047857" stroke-width="1" />
+      <text x="14" y="112" fill="#a7f3d0" font-size="11" font-family="monospace">slave/&lt;id&gt;/events</text>
+
+      <rect x="5" y="128" width="220" height="28" rx="5" fill="#064e3b" stroke="#047857" stroke-width="1" />
+      <text x="14" y="146" fill="#a7f3d0" font-size="11" font-family="monospace">slave/&lt;id&gt;/input/&lt;comp&gt;</text>
+
+      <rect x="5" y="162" width="220" height="28" rx="5" fill="#064e3b" stroke="#047857" stroke-width="1" />
+      <text x="14" y="180" fill="#a7f3d0" font-size="11" font-family="monospace">homeassistant/+/&lt;id&gt;/config</text>
+
+      <!-- Subscribed commands -->
+      <text x="5" y="218" fill="#38bdf8" font-size="12" font-weight="600">COMMAND TOPICS (Rx)</text>
+
+      <rect x="5" y="228" width="220" height="28" rx="5" fill="#0f172a" stroke="#0284c7" stroke-width="1" />
+      <text x="14" y="246" fill="#bae6fd" font-size="11" font-family="monospace">slave/&lt;id&gt;/job/run</text>
+
+      <rect x="5" y="262" width="220" height="28" rx="5" fill="#0f172a" stroke="#ef4444" stroke-width="1" />
+      <text x="14" y="280" fill="#fca5a5" font-size="11" font-family="monospace">slave/&lt;id&gt;/job/abort</text>
+
+      <rect x="5" y="296" width="220" height="28" rx="5" fill="#0f172a" stroke="#0284c7" stroke-width="1" />
+      <text x="14" y="314" fill="#bae6fd" font-size="11" font-family="monospace">slave/&lt;id&gt;/ota/check</text>
+
+      <rect x="5" y="330" width="220" height="28" rx="5" fill="#0f172a" stroke="#0284c7" stroke-width="1" />
+      <text x="14" y="348" fill="#bae6fd" font-size="11" font-family="monospace">slave/&lt;id&gt;/ota/update</text>
+    </g>
+  </g>
+
+  <!-- ==================== 3. HOME ASSISTANT & ORCHESTRATION ==================== -->
+  <g transform="translate(740, 90)" filter="url(#shadow)">
+    <!-- Container -->
+    <rect width="320" height="230" rx="14" fill="url(#haGrad)" stroke="#818cf8" stroke-width="2" stroke-opacity="0.8" />
+    
+    <!-- Header -->
+    <rect width="320" height="42" rx="14" fill="#4338ca" fill-opacity="0.3" />
+    <circle cx="22" cy="21" r="7" fill="#818cf8" />
+    <text x="38" y="26" fill="#e0e7ff" font-size="15" font-weight="700">Home Assistant / Orchestrator</text>
+
+    <!-- Entities Generated -->
+    <g transform="translate(18, 54)">
+      <text x="0" y="16" fill="#a5b4fc" font-size="12" font-weight="600">AUTO-DISCOVERED ENTITIES</text>
+      
+      <rect x="0" y="26" width="136" height="34" rx="6" fill="#1e1b4b" stroke="#4f46e5" stroke-width="1" />
+      <text x="10" y="42" fill="#e0e7ff" font-size="10" font-weight="600">Routine Buttons</text>
+      <text x="10" y="54" fill="#c7d2fe" font-size="9">door_unlock, press</text>
+
+      <rect x="146" y="26" width="136" height="34" rx="6" fill="#450a0a" stroke="#dc2626" stroke-width="1" />
+      <text x="156" y="42" fill="#fee2e2" font-size="10" font-weight="600">Emergency Stop</text>
+      <text x="156" y="54" fill="#fca5a5" font-size="9">Immediate abort</text>
+
+      <rect x="0" y="70" width="136" height="34" rx="6" fill="#1e1b4b" stroke="#4f46e5" stroke-width="1" />
+      <text x="10" y="86" fill="#e0e7ff" font-size="10" font-weight="600">Binary Sensors</text>
+      <text x="10" y="98" fill="#c7d2fe" font-size="9">washer_led, reed</text>
+
+      <rect x="146" y="70" width="136" height="34" rx="6" fill="#1e1b4b" stroke="#4f46e5" stroke-width="1" />
+      <text x="156" y="86" fill="#e0e7ff" font-size="10" font-weight="600">Check OTA Button</text>
+      <text x="156" y="98" fill="#c7d2fe" font-size="9">Trigger firmware sync</text>
+
+      <rect x="0" y="114" width="282" height="46" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="10" y="132" fill="#cbd5e1" font-size="11" font-weight="600">Automation Engine &amp; Routine Dispatch</text>
+      <text x="10" y="148" fill="#94a3b8" font-size="10">Fingerprint match event → Door unlock routine</text>
+    </g>
+  </g>
+
+  <!-- ==================== 4. FIRMWARE NGINX SERVER ==================== -->
+  <g transform="translate(740, 350)" filter="url(#shadow)">
+    <!-- Container -->
+    <rect width="320" height="150" rx="14" fill="url(#nginxGrad)" stroke="#10b981" stroke-width="2" stroke-opacity="0.8" />
+    
+    <!-- Header -->
+    <rect width="320" height="38" rx="14" fill="#047857" fill-opacity="0.3" />
+    <circle cx="22" cy="19" r="7" fill="#34d399" />
+    <text x="38" y="24" fill="#ecfdf5" font-size="14" font-weight="700">Nginx Firmware Server (LAN)</text>
+
+    <g transform="translate(18, 48)">
+      <text x="0" y="18" fill="#a7f3d0" font-size="11">HTTP Endpoint: http://&lt;server&gt;:8080/firmware/</text>
+      
+      <rect x="0" y="28" width="282" height="26" rx="5" fill="#022c22" stroke="#059669" stroke-width="1" />
+      <text x="10" y="45" fill="#6ee7b7" font-size="11" font-family="monospace">GET /manifest.json (SHA-256 + Semver)</text>
+
+      <rect x="0" y="60" width="282" height="26" rx="5" fill="#022c22" stroke="#059669" stroke-width="1" />
+      <text x="10" y="77" fill="#6ee7b7" font-size="11" font-family="monospace">GET /&lt;version&gt;/main.py, drivers, ...</text>
+    </g>
+  </g>
+
+  <!-- ==================== 5. DEVELOPER TOOLS & WORKSTATION ==================== -->
+  <g transform="translate(740, 520)" filter="url(#shadow)">
+    <rect width="320" height="140" rx="14" fill="url(#toolsGrad)" stroke="#f43f5e" stroke-width="1.5" stroke-opacity="0.7" />
+    
+    <!-- Header -->
+    <rect width="320" height="34" rx="14" fill="#be123c" fill-opacity="0.25" />
+    <circle cx="20" cy="17" r="6" fill="#fb7185" />
+    <text x="34" y="22" fill="#ffe4e6" font-size="13" font-weight="700">DevOps &amp; Testing Tools (Python)</text>
+
+    <g transform="translate(16, 44)">
+      <text x="0" y="14" fill="#fbcfe8" font-size="11" font-weight="600">tools/ota_manager.py</text>
+      <text x="140" y="14" fill="#94a3b8" font-size="10">→ Package &amp; SCP Publish</text>
+
+      <text x="0" y="38" fill="#fbcfe8" font-size="11" font-weight="600">tools/deploy.py</text>
+      <text x="140" y="38" fill="#94a3b8" font-size="10">→ Initial serial mpremote flash</text>
+
+      <text x="0" y="62" fill="#fbcfe8" font-size="11" font-weight="600">tools/simulator.py</text>
+      <text x="140" y="62" fill="#94a3b8" font-size="10">→ Desktop Python live simulation</text>
+
+      <text x="0" y="84" fill="#fbcfe8" font-size="11" font-weight="600">pytest tests/</text>
+      <text x="140" y="84" fill="#94a3b8" font-size="10">→ 28 Unit &amp; Mosquitto tests</text>
+    </g>
+  </g>
+
+  <!-- ==================== CONNECTING ARROWS & DATAFLOW ==================== -->
+  <!-- 1. ESP32 to Broker (Tx) -->
+  <path d="M 400 240 L 440 240" fill="none" stroke="#10b981" stroke-width="2.5" marker-end="url(#arrowEmerald)" />
+  <text x="408" y="232" fill="#6ee7b7" font-size="9" font-weight="600">Tx</text>
+
+  <!-- 2. Broker to ESP32 (Rx Commands) -->
+  <path d="M 440 430 L 400 430" fill="none" stroke="#06b6d4" stroke-width="2.5" marker-end="url(#arrowCyan)" />
+  <text x="412" y="422" fill="#38bdf8" font-size="9" font-weight="600">Rx</text>
+
+  <!-- 3. Broker to Home Assistant (Events & Discovery) -->
+  <path d="M 700 240 L 740 220" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowEmerald)" />
+  
+  <!-- 4. Home Assistant to Broker (Job Commands) -->
+  <path d="M 740 270 L 700 290" fill="none" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrowCyan)" />
+
+  <!-- 5. ESP32 to Nginx (HTTP OTA Fetch) -->
+  <path d="M 400 520 Q 560 520 740 440" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowAmber)" />
+  <text x="530" y="505" fill="#fcd34d" font-size="10" font-weight="600">HTTP GET /firmware</text>
+
+  <!-- 6. Developer tool SCP publish to Nginx -->
+  <path d="M 880 520 L 880 500" fill="none" stroke="#a855f7" stroke-width="2" marker-end="url(#arrowViolet)" />
+  <text x="890" y="513" fill="#c084fc" font-size="9" font-weight="600">SCP</text>
+
+</svg>

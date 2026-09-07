@@ -9,6 +9,12 @@ Features:
 
 ---
 
+## System Architecture
+
+![System Architecture](docs/assets/system_architecture.svg)
+
+---
+
 ## 1. Dynamic Hardware Component Modeling
 
 Devices configure their attached hardware dynamically under `components` in `config.json`. Drivers and background tasks are only started for components declared on that specific board.
@@ -29,6 +35,9 @@ Devices configure their attached hardware dynamically under `components` in `con
 ### Example Profiles in `config.json`
 
 #### Profile A: Door Controller (Solenoid + AS608 Fingerprint + Buzzer)
+
+> [!TIP]
+> Complete electrical schematic, bill of materials, and safety guidelines are available in the **[Hardware Wiring Guide](docs/HARDWARE_WIRING.md)**.
 ```json
 {
   "components": {
@@ -211,7 +220,7 @@ Run all unit tests in the virtual environment:
 5. **Job Runner (`tests/test_job_runner.py`)**: Tests single-job locking and emergency abort teardown.
 6. **End-to-End Simulation (`tests/integration/test_door_flow.py`)**: Simulates complete finger scan $\rightarrow$ auth $\rightarrow$ door unlock flow.
 7. **Live Mosquitto (`tests/integration/test_mqtt_integration.py`)**: Connects to live broker at `MQTT_BROKER_HOST`.
-8. **Raspberry Pi HIL (`tests/hil/test_pi_hil.py`)**: Physical GPIO pulse timing verification on real hardware.
+8. **Raspberry Pi HIL (`tests/hil/test_pi_hil.py`)**: Physical GPIO pulse timing, PWM duty cycle, and UART verification on real hardware (see [HIL Setup Guide](docs/HIL_RPI_SETUP.md) & [Wiring Diagram](docs/HARDWARE_WIRING.md#7-raspberry-pi-hardware-in-the-loop-hil-test-wiring)).
 
 ---
 

@@ -1,0 +1,253 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 880" width="100%" height="100%" style="background:#0b1120; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="piGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#831843" />
+      <stop offset="100%" stop-color="#500724" />
+    </linearGradient>
+    <linearGradient id="esp32Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0369a1" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="dropShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000000" flood-opacity="0.6" />
+    </filter>
+
+    <!-- Arrows -->
+    <marker id="arrowCyan" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowAmber" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arrowPink" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 z" fill="#ec4899" />
+    </marker>
+    <marker id="arrowPurple" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 z" fill="#a855f7" />
+    </marker>
+    <marker id="arrowYellow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 z" fill="#eab308" />
+    </marker>
+    <marker id="arrowGreen" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 z" fill="#22c55e" />
+    </marker>
+  </defs>
+
+  <!-- ==================== HEADER ==================== -->
+  <g transform="translate(40, 24)">
+    <text x="0" y="24" fill="#f8fafc" font-size="22" font-weight="700">Raspberry Pi Multi-Signal HIL Test Rig</text>
+    <text x="0" y="46" fill="#94a3b8" font-size="13">Pulse Timing • 50Hz PWM Duty Cycle • UART AS608 Emulation • Bidirectional GPIOs (`tests/hil/test_pi_hil.py`)</text>
+  </g>
+
+  <!-- ==================== 1. LEFT: RASPBERRY PI ==================== -->
+  <g transform="translate(40, 85)" filter="url(#dropShadow)">
+    <rect width="450" height="580" rx="14" fill="url(#cardBg)" stroke="#f43f5e" stroke-width="2" />
+    
+    <!-- Title Bar -->
+    <rect width="450" height="46" rx="14" fill="url(#piGrad)" />
+    <circle cx="24" cy="23" r="8" fill="#fb7185" />
+    <text x="42" y="28" fill="#fff1f2" font-size="15" font-weight="700">Raspberry Pi 4 / 5 (Test Harness)</text>
+
+    <text x="20" y="70" fill="#fda4af" font-size="12" font-weight="600">Target DUT: `DEVICE_ID=esp32_hil_dut`</text>
+    <text x="20" y="86" fill="#94a3b8" font-size="10">Runs pytest suite with libgpiod hardware timestamps</text>
+
+    <!-- 40-Pin Header Representation -->
+    <g transform="translate(20, 100)">
+      <rect width="410" height="455" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+      <text x="14" y="22" fill="#f43f5e" font-size="11" font-weight="700">PI GPIO PINOUT MAPPING (BCM)</text>
+
+      <!-- Pin 06 / 09: GND -->
+      <rect x="15" y="36" width="380" height="34" rx="5" fill="#1e293b" stroke="#64748b" stroke-width="1" />
+      <circle cx="32" cy="53" r="5" fill="#475569" stroke="#94a3b8" stroke-width="1" />
+      <text x="48" y="56" fill="#cbd5e1" font-size="11" font-family="monospace">Pin 06/09: Common Ground (GND)</text>
+
+      <!-- Pin 11: BCM 17 - Solenoid Pulse -->
+      <rect x="15" y="78" width="380" height="42" rx="5" fill="#0369a1" fill-opacity="0.25" stroke="#38bdf8" stroke-width="1.2" />
+      <circle cx="32" cy="99" r="6" fill="#38bdf8" />
+      <text x="48" y="96" fill="#f0f9ff" font-size="11" font-weight="700" font-family="monospace">Pin 11 (BCM 17): Solenoid Sense</text>
+      <text x="48" y="112" fill="#bae6fd" font-size="9">Input Line ← ESP32 Solenoid Trigger Pulse (1000ms ± 150ms)</text>
+
+      <!-- Pin 16: BCM 23 - PWM Servo Sense -->
+      <rect x="15" y="128" width="380" height="42" rx="5" fill="#78350f" fill-opacity="0.25" stroke="#f59e0b" stroke-width="1.2" />
+      <circle cx="32" cy="149" r="6" fill="#f59e0b" />
+      <text x="48" y="146" fill="#fffbeb" font-size="11" font-weight="700" font-family="monospace">Pin 16 (BCM 23): PWM Servo Sense</text>
+      <text x="48" y="162" fill="#fde68a" font-size="9">Input Line ← ESP32 PWM Carrier 50Hz (500µs to 2500µs high)</text>
+
+      <!-- Pin 13: BCM 27 - Digital Out Sense -->
+      <rect x="15" y="178" width="380" height="42" rx="5" fill="#831843" fill-opacity="0.25" stroke="#ec4899" stroke-width="1.2" />
+      <circle cx="32" cy="199" r="6" fill="#ec4899" />
+      <text x="48" y="196" fill="#fdf2f8" font-size="11" font-weight="700" font-family="monospace">Pin 13 (BCM 27): Digital Out Sense</text>
+      <text x="48" y="212" fill="#fbcfe8" font-size="9">Input Line ← ESP32 Status Output (Buzzer/LED/Relay)</text>
+
+      <!-- Pin 15: BCM 22 - Digital In Stimulus -->
+      <rect x="15" y="228" width="380" height="42" rx="5" fill="#581c87" fill-opacity="0.25" stroke="#a855f7" stroke-width="1.2" />
+      <circle cx="32" cy="249" r="6" fill="#a855f7" />
+      <text x="48" y="246" fill="#faf5ff" font-size="11" font-weight="700" font-family="monospace">Pin 15 (BCM 22): Input Stimulus</text>
+      <text x="48" y="262" fill="#e9d5ff" font-size="9">Output Line → ESP32 Door Sensor / Appliance LED Input</text>
+
+      <!-- Pin 08 / 10: UART0 Serial -->
+      <rect x="15" y="278" width="380" height="50" rx="5" fill="#064e3b" fill-opacity="0.25" stroke="#10b981" stroke-width="1.2" />
+      <circle cx="32" cy="303" r="6" fill="#10b981" />
+      <text x="48" y="296" fill="#f0fdf4" font-size="11" font-weight="700" font-family="monospace">Pin 08/10 (BCM 14/15): UART Emulation</text>
+      <text x="48" y="312" fill="#86efac" font-size="9">`/dev/serial0` @ 57600 baud (Emulates AS608 Fingerprint)</text>
+
+      <!-- MQTT Service on Pi -->
+      <rect x="15" y="340" width="380" height="46" rx="5" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <text x="26" y="360" fill="#38bdf8" font-size="11" font-weight="600">Mosquitto MQTT Broker: 127.0.0.1:1883</text>
+      <text x="26" y="376" fill="#94a3b8" font-size="9">Dispatches job runs &amp; verifies event telemetry</text>
+    </g>
+  </g>
+
+  <!-- ==================== 2. RIGHT: ESP32 DUT ==================== -->
+  <g transform="translate(770, 85)" filter="url(#dropShadow)">
+    <rect width="450" height="580" rx="14" fill="url(#cardBg)" stroke="#38bdf8" stroke-width="2" />
+    
+    <!-- Title Bar -->
+    <rect width="450" height="46" rx="14" fill="url(#esp32Grad)" />
+    <circle cx="24" cy="23" r="8" fill="#38bdf8" />
+    <text x="42" y="28" fill="#f0f9ff" font-size="15" font-weight="700">ESP32 DUT (`DEVICE_ID=esp32_hil_dut`)</text>
+
+    <text x="20" y="70" fill="#7dd3fc" font-size="12" font-weight="600">MicroPython Universal Slave Firmware</text>
+    <text x="20" y="86" fill="#94a3b8" font-size="10">Dynamic component profile executing routines</text>
+
+    <!-- Pin Connections Container -->
+    <g transform="translate(20, 100)">
+      <rect width="410" height="455" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+      <text x="14" y="22" fill="#38bdf8" font-size="11" font-weight="700">ESP32 PIN CONNECTIONS</text>
+
+      <!-- GND -->
+      <rect x="15" y="36" width="380" height="34" rx="5" fill="#1e293b" stroke="#64748b" stroke-width="1" />
+      <circle cx="32" cy="53" r="5" fill="#475569" stroke="#94a3b8" stroke-width="1" />
+      <text x="48" y="56" fill="#cbd5e1" font-size="11" font-family="monospace">GND: Common Star Ground</text>
+
+      <!-- GPIO 23: Solenoid Out -->
+      <rect x="15" y="78" width="380" height="42" rx="5" fill="#0369a1" fill-opacity="0.25" stroke="#38bdf8" stroke-width="1.2" />
+      <circle cx="32" cy="99" r="6" fill="#38bdf8" />
+      <text x="48" y="96" fill="#f0f9ff" font-size="11" font-weight="700" font-family="monospace">GPIO 23: Solenoid Output (3.3V)</text>
+      <text x="48" y="112" fill="#bae6fd" font-size="9">Active High pulse → Triggers timed lock bolt</text>
+
+      <!-- GPIO 25: Servo PWM Out -->
+      <rect x="15" y="128" width="380" height="42" rx="5" fill="#78350f" fill-opacity="0.25" stroke="#f59e0b" stroke-width="1.2" />
+      <circle cx="32" cy="149" r="6" fill="#f59e0b" />
+      <text x="48" y="146" fill="#fffbeb" font-size="11" font-weight="700" font-family="monospace">GPIO 25: Servo PWM Output</text>
+      <text x="48" y="162" fill="#fde68a" font-size="9">50Hz PWM output (500µs @ 0° to 1500µs @ 90°)</text>
+
+      <!-- GPIO 19: Digital Out -->
+      <rect x="15" y="178" width="380" height="42" rx="5" fill="#831843" fill-opacity="0.25" stroke="#ec4899" stroke-width="1.2" />
+      <circle cx="32" cy="199" r="6" fill="#ec4899" />
+      <text x="48" y="196" fill="#fdf2f8" font-size="11" font-weight="700" font-family="monospace">GPIO 19: Buzzer / Status Out</text>
+      <text x="48" y="212" fill="#fbcfe8" font-size="9">Static digital level: 1 = ON, 0 = OFF</text>
+
+      <!-- GPIO 4: Digital In -->
+      <rect x="15" y="228" width="380" height="42" rx="5" fill="#581c87" fill-opacity="0.25" stroke="#a855f7" stroke-width="1.2" />
+      <circle cx="32" cy="249" r="6" fill="#a855f7" />
+      <text x="48" y="246" fill="#faf5ff" font-size="11" font-weight="700" font-family="monospace">GPIO 4: Sensor Input</text>
+      <text x="48" y="262" fill="#e9d5ff" font-size="9">Input pin with change detection &amp; debounce</text>
+
+      <!-- GPIO 16/17: AS608 UART2 -->
+      <rect x="15" y="278" width="380" height="50" rx="5" fill="#064e3b" fill-opacity="0.25" stroke="#10b981" stroke-width="1.2" />
+      <circle cx="32" cy="303" r="6" fill="#10b981" />
+      <text x="48" y="296" fill="#f0fdf4" font-size="11" font-weight="700" font-family="monospace">GPIO 16 (RX2) &amp; GPIO 17 (TX2)</text>
+      <text x="48" y="312" fill="#86efac" font-size="9">UART2 peripheral bus @ 57600 baud</text>
+
+      <!-- Safety Callout Box -->
+      <rect x="15" y="340" width="380" height="46" rx="5" fill="#450a0a" fill-opacity="0.35" stroke="#ef4444" stroke-width="1" />
+      <text x="26" y="358" fill="#fca5a5" font-size="10" font-weight="700">⚠️ 3.3V CMOS DIRECT COMPATIBILITY</text>
+      <text x="26" y="374" fill="#fecaca" font-size="9">Both ESP32 &amp; Pi logic are 3.3V. Never connect 12V supply to either board!</text>
+    </g>
+  </g>
+
+  <!-- ==================== 3. CENTER DIRECT CONNECTIONS ==================== -->
+  <!-- Wire 1: GND -->
+  <path d="M 490 190 L 770 190" fill="none" stroke="#64748b" stroke-width="2.5" stroke-dasharray="6,4" />
+  <text x="600" y="182" fill="#94a3b8" font-size="9" font-weight="700">GND Bus</text>
+
+  <!-- Wire 2: Solenoid (GPIO 23 -> Pin 11) -->
+  <path d="M 770 240 L 490 240" fill="none" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowCyan)" />
+  <text x="590" y="232" fill="#7dd3fc" font-size="9" font-weight="700">Solenoid (3.3V)</text>
+
+  <!-- Wire 3: PWM (GPIO 25 -> Pin 16) -->
+  <path d="M 770 290 L 490 290" fill="none" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#arrowAmber)" />
+  <text x="590" y="282" fill="#fde68a" font-size="9" font-weight="700">50Hz PWM</text>
+
+  <!-- Wire 4: Digital Out (GPIO 19 -> Pin 13) -->
+  <path d="M 770 340 L 490 340" fill="none" stroke="#ec4899" stroke-width="2.5" marker-end="url(#arrowPink)" />
+  <text x="590" y="332" fill="#f472b6" font-size="9" font-weight="700">Digital Out</text>
+
+  <!-- Wire 5: Digital In (Pin 15 -> GPIO 4) -->
+  <path d="M 490 390 L 770 390" fill="none" stroke="#a855f7" stroke-width="2.5" marker-end="url(#arrowPurple)" />
+  <text x="590" y="382" fill="#d8b4fe" font-size="9" font-weight="700">Input Stimulus</text>
+
+  <!-- Wire 6: UART Rx/Tx Cross -->
+  <path d="M 490 440 L 770 440" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)" />
+  <text x="590" y="432" fill="#86efac" font-size="9" font-weight="700">Pi TX → ESP RX</text>
+
+  <path d="M 770 460 L 490 460" fill="none" stroke="#eab308" stroke-width="2" marker-end="url(#arrowYellow)" />
+  <text x="590" y="475" fill="#fef08a" font-size="9" font-weight="700">ESP TX → Pi RX</text>
+
+  <!-- ==================== 4. TEST SUITE REFERENCE FOOTER ==================== -->
+  <g transform="translate(40, 685)" filter="url(#dropShadow)">
+    <rect width="1180" height="160" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <text x="24" y="26" fill="#f8fafc" font-size="14" font-weight="700">Automated Tests in `tests/hil/test_pi_hil.py`</text>
+
+    <g transform="translate(24, 42)">
+      <!-- Box 1 -->
+      <g transform="translate(0, 0)">
+        <rect width="215" height="100" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1" />
+        <text x="12" y="20" fill="#38bdf8" font-size="11" font-weight="700">1. Solenoid Pulse</text>
+        <text x="12" y="38" fill="#cbd5e1" font-size="10">Captures rising/falling edge</text>
+        <text x="12" y="54" fill="#cbd5e1" font-size="10">Asserts 850ms ≤ t ≤ 1150ms</text>
+        <text x="12" y="70" fill="#cbd5e1" font-size="10">Verifies failsafe 0</text>
+        <text x="12" y="88" fill="#38bdf8" font-size="9">test_measure_solenoid...</text>
+      </g>
+
+      <!-- Box 2 -->
+      <g transform="translate(229, 0)">
+        <rect width="215" height="100" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1" />
+        <text x="12" y="20" fill="#f59e0b" font-size="11" font-weight="700">2. PWM Duty Cycle</text>
+        <text x="12" y="38" fill="#cbd5e1" font-size="10">Measures 50Hz frequency</text>
+        <text x="12" y="54" fill="#cbd5e1" font-size="10">0° pulse: ~500µs</text>
+        <text x="12" y="70" fill="#cbd5e1" font-size="10">90° pulse: ~1500µs</text>
+        <text x="12" y="88" fill="#f59e0b" font-size="9">test_measure_servo_pwm...</text>
+      </g>
+
+      <!-- Box 3 -->
+      <g transform="translate(458, 0)">
+        <rect width="215" height="100" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1" />
+        <text x="12" y="20" fill="#ec4899" font-size="11" font-weight="700">3. Digital Output</text>
+        <text x="12" y="38" fill="#cbd5e1" font-size="10">Writes state 1 and 0</text>
+        <text x="12" y="54" fill="#cbd5e1" font-size="10">Asserts physical logic high/low</text>
+        <text x="12" y="70" fill="#cbd5e1" font-size="10">Buzzer / Status Relay</text>
+        <text x="12" y="88" fill="#ec4899" font-size="9">test_digital_output_state...</text>
+      </g>
+
+      <!-- Box 4 -->
+      <g transform="translate(687, 0)">
+        <rect width="215" height="100" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1" />
+        <text x="12" y="20" fill="#a855f7" font-size="11" font-weight="700">4. Input Stimulus</text>
+        <text x="12" y="38" fill="#cbd5e1" font-size="10">Pi drives line 1 and 0</text>
+        <text x="12" y="54" fill="#cbd5e1" font-size="10">ESP32 detects transitions</text>
+        <text x="12" y="70" fill="#cbd5e1" font-size="10">Asserts live MQTT updates</text>
+        <text x="12" y="88" fill="#a855f7" font-size="9">test_digital_input_stimulus...</text>
+      </g>
+
+      <!-- Box 5 -->
+      <g transform="translate(916, 0)">
+        <rect width="215" height="100" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1" />
+        <text x="12" y="20" fill="#10b981" font-size="11" font-weight="700">5. UART AS608 Emulation</text>
+        <text x="12" y="38" fill="#cbd5e1" font-size="10">Pi intercepts command packet</text>
+        <text x="12" y="54" fill="#cbd5e1" font-size="10">Sends mock ACK (Slot #5)</text>
+        <text x="12" y="70" fill="#cbd5e1" font-size="10">Asserts MQTT scanned event</text>
+        <text x="12" y="88" fill="#10b981" font-size="9">test_uart_as608_peripheral...</text>
+      </g>
+    </g>
+  </g>
+
+</svg>

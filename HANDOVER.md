@@ -30,6 +30,10 @@ A production-ready MicroPython MQTT edge slave for ESP32 devices designed to exe
    - HA Discovery button "Check & Apply OTA" and MQTT topic `slave/<id>/ota/update`.
 5. **Home Assistant Auto-Discovery (`src/ha/discovery.py`)**:
    - Generates discovery payloads for status sensor, routine buttons, abort button, OTA update button, and binary sensors for monitored digital inputs.
+6. **Visual Architecture & Hardware Schematics (`docs/assets/`, `docs/HARDWARE_WIRING.md`)**:
+   - `docs/assets/system_architecture.svg`: Complete end-to-end architecture vector diagram.
+   - `docs/assets/wiring_door_controller.svg`: Non-crossing centered-NodeMCU star topology schematic for Profile A.
+   - `docs/HARDWARE_WIRING.md`: Dedicated wiring guide with BOM and electrical safety practices.
 
 ---
 
@@ -43,17 +47,21 @@ source .venv/bin/activate
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Run all tests (28 passing, 1 skipped for hardware HIL)
+# 3. Run all tests (28 passing, 6 skipped when HIL Pi is offline)
 pytest -v tests/
 ```
 
-### Integration Broker & Simulator:
+### Integration Broker, Simulator & Remote HIL:
 ```bash
 docker compose up -d mosquitto
 pytest -v tests/integration/
 
 # Run native desktop simulation
 python tools/simulator.py
+
+# Automated Raspberry Pi HIL Setup & Remote Run
+python tools/hil_manager.py setup --host <PI_IP> --user pi
+python tools/hil_manager.py run
 ```
 
 ---
@@ -68,4 +76,5 @@ python tools/simulator.py
 - `tests/test_ota.py`: Validates semantic versioning, staging, atomic replacement, and rollback.
 - `tests/integration/test_door_flow.py`: End-to-end simulation of fingerprint scan -> auth -> solenoid unlock.
 - `tests/integration/test_mqtt_integration.py`: Live Mosquitto LWT, publish/subscribe, and thread-safe async dispatching.
-- `tests/hil/test_pi_hil.py`: Hardware-in-the-loop pulse timing verification (skipped unless running on Raspberry Pi).
+- `tests/hil/test_pi_hil.py`: Multi-signal Hardware-in-the-Loop suite (solenoid timing, 50Hz PWM duty cycle, digital out switching, digital in stimulus telemetry, AS608 UART packet emulation, and auto-dispatching remote test runner). Setup guide: `docs/HIL_RPI_SETUP.md`.
+

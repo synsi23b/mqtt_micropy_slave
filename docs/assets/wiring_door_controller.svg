@@ -1,0 +1,343 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 850" width="100%" height="100%" style="background:#0b1120; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="esp32Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="solenoidGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+    <linearGradient id="as608Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#075985" />
+    </linearGradient>
+
+    <!-- Drop Shadows -->
+    <filter id="dropShadow" x="-6%" y="-6%" width="112%" height="112%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000000" flood-opacity="0.6" />
+    </filter>
+
+    <!-- Arrow markers -->
+    <marker id="arrowYellow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 z" fill="#eab308" />
+    </marker>
+    <marker id="arrowGreen" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 z" fill="#22c55e" />
+    </marker>
+    <marker id="arrowCyan" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowPink" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 z" fill="#ec4899" />
+    </marker>
+    <marker id="arrowPurple" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M 0 0 L 6 3 L 0 6 z" fill="#a855f7" />
+    </marker>
+  </defs>
+
+  <!-- ==================== HEADER ==================== -->
+  <g transform="translate(40, 24)">
+    <text x="0" y="24" fill="#f8fafc" font-size="22" font-weight="700">Hardware Wiring Diagram — Profile A: Smart Door Controller</text>
+    <text x="0" y="46" fill="#94a3b8" font-size="13">Clean Star Topology: Left Sensors / Right Actuators • Zero Wire Crossovers</text>
+  </g>
+
+  <!-- ==================== 1. LEFT COLUMN: AS608 FINGERPRINT & REED SENSOR ==================== -->
+  
+  <!-- 1A. AS608 Optical Fingerprint Module (Top Left) -->
+  <g transform="translate(40, 85)" filter="url(#dropShadow)">
+    <rect width="380" height="265" rx="12" fill="url(#cardBg)" stroke="#0284c7" stroke-width="1.5" />
+    <text x="18" y="28" fill="#38bdf8" font-size="15" font-weight="700">AS608 Optical Fingerprint Reader</text>
+    <text x="18" y="46" fill="#94a3b8" font-size="11">UART2 @ 57600 baud • 5-sample enrollment protocol</text>
+
+    <!-- Sensor Graphic -->
+    <g transform="translate(18, 65)">
+      <rect width="90" height="115" rx="8" fill="url(#as608Grad)" stroke="#38bdf8" stroke-width="1.5" />
+      <rect x="18" y="20" width="54" height="65" rx="6" fill="#082f49" stroke="#7dd3fc" stroke-width="1.5" />
+      <circle cx="45" cy="52" r="16" fill="#0284c7" fill-opacity="0.35" />
+      <path d="M 36 52 Q 45 42 54 52 Q 45 62 36 52" fill="none" stroke="#bae6fd" stroke-width="1.5" />
+      <text x="22" y="100" fill="#e0f2fe" font-size="8" font-weight="600">PRISM GLASS</text>
+    </g>
+
+    <!-- Terminal connections block -->
+    <g transform="translate(125, 65)">
+      <rect width="235" height="180" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1" />
+      
+      <!-- VCC -->
+      <circle cx="20" cy="30" r="5" fill="#ef4444" />
+      <text x="32" y="34" fill="#fca5a5" font-size="11" font-weight="600">VCC (Red)</text>
+      <text x="135" y="34" fill="#94a3b8" font-size="10">→ 3.3V / 5V</text>
+
+      <!-- GND -->
+      <circle cx="20" cy="70" r="5" fill="#475569" stroke="#94a3b8" stroke-width="1" />
+      <text x="32" y="74" fill="#cbd5e1" font-size="11" font-weight="600">GND (Black)</text>
+      <text x="135" y="74" fill="#94a3b8" font-size="10">→ Common GND</text>
+
+      <!-- TXD -->
+      <circle cx="20" cy="110" r="5" fill="#eab308" />
+      <text x="32" y="114" fill="#fef08a" font-size="11" font-weight="600">TXD (Yellow)</text>
+      <text x="135" y="114" fill="#fde047" font-size="10">→ ESP32 RX2 (16)</text>
+
+      <!-- RXD -->
+      <circle cx="20" cy="150" r="5" fill="#22c55e" />
+      <text x="32" y="154" fill="#bbf7d0" font-size="11" font-weight="600">RXD (Green)</text>
+      <text x="135" y="154" fill="#86efac" font-size="10">← ESP32 TX2 (17)</text>
+    </g>
+  </g>
+
+  <!-- 1B. Magnetic Door Reed Sensor (Bottom Left) -->
+  <g transform="translate(40, 375)" filter="url(#dropShadow)">
+    <rect width="380" height="255" rx="12" fill="url(#cardBg)" stroke="#a855f7" stroke-width="1.5" />
+    <text x="18" y="28" fill="#c084fc" font-size="15" font-weight="700">Door Contact Sensor (Magnetic Reed)</text>
+    <text x="18" y="46" fill="#94a3b8" font-size="11">Monitors open/closed state • Live MQTT reporting</text>
+
+    <!-- Reed Illustration -->
+    <g transform="translate(25, 75)">
+      <rect width="100" height="145" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <!-- Frame Switch -->
+      <rect x="15" y="20" width="30" height="60" rx="4" fill="#334155" stroke="#94a3b8" stroke-width="1" />
+      <text x="18" y="55" fill="#f8fafc" font-size="9" font-weight="700">REED</text>
+      <!-- Door Magnet -->
+      <rect x="55" y="20" width="30" height="60" rx="4" fill="#0284c7" stroke="#38bdf8" stroke-width="1" />
+      <text x="59" y="55" fill="#f8fafc" font-size="9" font-weight="700">MAG</text>
+      
+      <text x="15" y="105" fill="#cbd5e1" font-size="9">Door Closed: Loop Made</text>
+      <text x="15" y="125" fill="#94a3b8" font-size="9">Door Open: Loop Broken</text>
+    </g>
+
+    <!-- Terminals -->
+    <g transform="translate(145, 75)">
+      <rect width="215" height="145" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1" />
+
+      <!-- Pin 1 -->
+      <circle cx="20" cy="45" r="5" fill="#a855f7" />
+      <text x="32" y="49" fill="#d8b4fe" font-size="11" font-weight="600">Signal (Lead 1)</text>
+      <text x="32" y="65" fill="#cbd5e1" font-size="10">→ ESP32 GPIO 4</text>
+      <text x="32" y="79" fill="#94a3b8" font-size="9">(Internal Pull-Up enabled)</text>
+
+      <!-- Pin 2 -->
+      <circle cx="20" cy="115" r="5" fill="#475569" stroke="#94a3b8" stroke-width="1" />
+      <text x="32" y="119" fill="#cbd5e1" font-size="11" font-weight="600">Return (Lead 2)</text>
+      <text x="32" y="133" fill="#cbd5e1" font-size="10">→ Common GND</text>
+    </g>
+  </g>
+
+  <!-- ==================== 2. CENTER COLUMN: ESP32 NODEMCU DEVKIT ==================== -->
+  <g transform="translate(470, 85)" filter="url(#dropShadow)">
+    <!-- Board Outline -->
+    <rect width="320" height="545" rx="14" fill="url(#esp32Grad)" stroke="#38bdf8" stroke-width="2.5" />
+    
+    <!-- Top Header -->
+    <rect width="320" height="46" rx="14" fill="#0284c7" fill-opacity="0.3" />
+    <circle cx="24" cy="23" r="7" fill="#38bdf8" />
+    <text x="40" y="28" fill="#f0f9ff" font-size="15" font-weight="700">ESP32 DevKit (NodeMCU)</text>
+
+    <!-- Wi-Fi PCB Antenna -->
+    <path d="M 110 52 L 210 52 L 210 75 L 110 75 Z" fill="#b45309" stroke="#d97706" stroke-width="1.5" />
+    <text x="122" y="67" fill="#fef3c7" font-size="9" font-weight="700">PCB WI-FI ANTENNA</text>
+
+    <!-- Metal RF Shield Canister -->
+    <rect x="90" y="90" width="140" height="150" rx="8" fill="#0f172a" stroke="#64748b" stroke-width="1.5" />
+    <circle cx="160" cy="150" r="28" fill="#1e293b" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3,3" />
+    <text x="115" y="145" fill="#f8fafc" font-size="13" font-weight="700">ESP-WROOM-32</text>
+    <text x="122" y="165" fill="#38bdf8" font-size="11">Dual-Core 240MHz</text>
+    <text x="126" y="185" fill="#94a3b8" font-size="10">MicroPython v1.22</text>
+
+    <!-- Bottom Micro-USB Port -->
+    <rect x="120" y="505" width="80" height="35" rx="4" fill="#475569" stroke="#94a3b8" stroke-width="1.5" />
+    <text x="132" y="527" fill="#f8fafc" font-size="10" font-weight="600">Micro-USB</text>
+
+    <!-- LEFT PIN HEADER (Sensors & UART) -->
+    <g transform="translate(10, 255)">
+      <rect width="115" height="235" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1" />
+      <text x="10" y="18" fill="#94a3b8" font-size="9" font-weight="700">LEFT PIN HEADER</text>
+
+      <!-- 3V3 -->
+      <circle cx="18" cy="40" r="5" fill="#ef4444" />
+      <text x="32" y="44" fill="#fca5a5" font-size="11" font-family="monospace">3V3 Out</text>
+
+      <!-- GND -->
+      <circle cx="18" cy="80" r="5" fill="#475569" stroke="#94a3b8" stroke-width="1" />
+      <text x="32" y="84" fill="#cbd5e1" font-size="11" font-family="monospace">GND</text>
+
+      <!-- GPIO 16 (RX2) -->
+      <circle cx="18" cy="120" r="5" fill="#eab308" />
+      <text x="32" y="124" fill="#fef08a" font-size="11" font-family="monospace">GPIO 16 (RX2)</text>
+
+      <!-- GPIO 17 (TX2) -->
+      <circle cx="18" cy="160" r="5" fill="#22c55e" />
+      <text x="32" y="164" fill="#bbf7d0" font-size="11" font-family="monospace">GPIO 17 (TX2)</text>
+
+      <!-- GPIO 4 -->
+      <circle cx="18" cy="200" r="5" fill="#a855f7" />
+      <text x="32" y="204" fill="#d8b4fe" font-size="11" font-family="monospace">GPIO 4</text>
+    </g>
+
+    <!-- RIGHT PIN HEADER (Actuators & Power) -->
+    <g transform="translate(195, 255)">
+      <rect width="115" height="235" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1" />
+      <text x="10" y="18" fill="#94a3b8" font-size="9" font-weight="700">RIGHT PIN HEADER</text>
+
+      <!-- VIN (5V) -->
+      <circle cx="97" cy="40" r="5" fill="#f97316" />
+      <text x="32" y="44" fill="#fdba74" font-size="11" font-family="monospace">VIN (5V)</text>
+
+      <!-- GND -->
+      <circle cx="97" cy="80" r="5" fill="#475569" stroke="#94a3b8" stroke-width="1" />
+      <text x="56" y="84" fill="#cbd5e1" font-size="11" font-family="monospace">GND</text>
+
+      <!-- GPIO 23 -->
+      <circle cx="97" cy="120" r="5" fill="#38bdf8" />
+      <text x="32" y="124" fill="#7dd3fc" font-size="11" font-family="monospace">GPIO 23</text>
+
+      <!-- GPIO 19 -->
+      <circle cx="97" cy="160" r="5" fill="#ec4899" />
+      <text x="32" y="164" fill="#f472b6" font-size="11" font-family="monospace">GPIO 19</text>
+
+      <!-- Spare/GND -->
+      <circle cx="97" cy="200" r="5" fill="#475569" stroke="#94a3b8" stroke-width="1" />
+      <text x="56" y="204" fill="#94a3b8" font-size="11" font-family="monospace">GND</text>
+    </g>
+  </g>
+
+  <!-- ==================== 3. RIGHT COLUMN: SOLENOID & BUZZER ==================== -->
+
+  <!-- 3A. Solenoid Bolt & Driver (Top Right) -->
+  <g transform="translate(840, 85)" filter="url(#dropShadow)">
+    <rect width="380" height="340" rx="12" fill="url(#cardBg)" stroke="#f59e0b" stroke-width="1.5" />
+    <text x="18" y="28" fill="#fbbf24" font-size="15" font-weight="700">12V Solenoid Bolt &amp; Driver Circuit</text>
+    <text x="18" y="46" fill="#94a3b8" font-size="11">MOSFET Switch Module + Reverse-Biased Flyback Diode</text>
+
+    <!-- Driver Module (IRLZ44N or Optocoupled Relay) -->
+    <g transform="translate(18, 65)">
+      <rect width="180" height="150" rx="8" fill="#0f172a" stroke="#0284c7" stroke-width="1.5" />
+      <text x="12" y="22" fill="#38bdf8" font-size="12" font-weight="700">MOSFET / Relay Board</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="9">Optoisolated Driver</text>
+
+      <!-- Inputs from ESP32 -->
+      <circle cx="16" cy="65" r="4" fill="#38bdf8" />
+      <text x="26" y="69" fill="#bae6fd" font-size="10" font-family="monospace">SIG ← GPIO 23</text>
+
+      <circle cx="16" cy="95" r="4" fill="#f97316" />
+      <text x="26" y="99" fill="#fdba74" font-size="10" font-family="monospace">VCC ← VIN (5V)</text>
+
+      <circle cx="16" cy="125" r="4" fill="#475569" stroke="#94a3b8" stroke-width="1" />
+      <text x="26" y="129" fill="#cbd5e1" font-size="10" font-family="monospace">GND ← Star GND</text>
+
+      <!-- Outputs to Solenoid -->
+      <circle cx="165" cy="85" r="4" fill="#38bdf8" />
+      <text x="80" y="89" fill="#7dd3fc" font-size="10" font-family="monospace">DRAIN (Sw. GND)</text>
+    </g>
+
+    <!-- External 12V Power In -->
+    <g transform="translate(215, 65)">
+      <rect width="145" height="60" rx="6" fill="#450a0a" fill-opacity="0.4" stroke="#ef4444" stroke-width="1" />
+      <text x="12" y="22" fill="#fca5a5" font-size="11" font-weight="700">+12V DC Supply</text>
+      <text x="12" y="38" fill="#cbd5e1" font-size="10">2A–3A Adapter</text>
+      <text x="12" y="52" fill="#94a3b8" font-size="9">GND tied to ESP32 GND</text>
+    </g>
+
+    <!-- Physical Solenoid Box -->
+    <g transform="translate(215, 140)">
+      <rect width="145" height="75" rx="6" fill="url(#solenoidGrad)" stroke="#64748b" stroke-width="1.5" />
+      <text x="10" y="24" fill="#f8fafc" font-size="12" font-weight="700">12V Solenoid Bolt</text>
+      <!-- Plunger -->
+      <rect x="-16" y="32" width="16" height="18" rx="3" fill="#94a3b8" stroke="#cbd5e1" stroke-width="1" />
+      <text x="10" y="44" fill="#cbd5e1" font-size="9">Default Pulse: 3000ms</text>
+      <text x="10" y="60" fill="#cbd5e1" font-size="9">Max Limit: 8000ms</text>
+    </g>
+
+    <!-- 1N4007 Diode Box (Crucial Protection) -->
+    <g transform="translate(18, 230)">
+      <rect width="345" height="90" rx="8" fill="#450a0a" fill-opacity="0.3" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3" />
+      <text x="15" y="24" fill="#fca5a5" font-size="13" font-weight="700">⚠️ CRITICAL: 1N4007 Flyback Diode Across Coil</text>
+      <text x="15" y="44" fill="#fecaca" font-size="11">• Cathode (Silver Band) connects to +12V DC Rail</text>
+      <text x="15" y="62" fill="#fecaca" font-size="11">• Anode connects to Switched Ground (MOSFET Drain)</text>
+      <text x="15" y="80" fill="#94a3b8" font-size="10">Suppresses hundreds of volts of inductive back-EMF that reboot/destroy the ESP32.</text>
+    </g>
+  </g>
+
+  <!-- 3B. Active Buzzer Module (Bottom Right) -->
+  <g transform="translate(840, 445)" filter="url(#dropShadow)">
+    <rect width="380" height="185" rx="12" fill="url(#cardBg)" stroke="#ec4899" stroke-width="1.5" />
+    <text x="18" y="28" fill="#f472b6" font-size="15" font-weight="700">Audio Feedback (Active Piezo Buzzer)</text>
+    <text x="18" y="46" fill="#94a3b8" font-size="11">Short chimes for unlock, scan success, and error alerts</text>
+
+    <!-- Buzzer Graphic -->
+    <g transform="translate(25, 65)">
+      <rect width="110" height="100" rx="8" fill="#1e293b" stroke="#ec4899" stroke-width="1.5" />
+      <circle cx="55" cy="50" r="28" fill="#0f172a" stroke="#ec4899" stroke-width="1.5" />
+      <circle cx="55" cy="50" r="8" fill="#ec4899" />
+      <text x="32" y="90" fill="#fbcfe8" font-size="9" font-weight="700">ACTIVE PIEZO</text>
+    </g>
+
+    <!-- Terminals -->
+    <g transform="translate(155, 65)">
+      <rect width="205" height="100" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1" />
+
+      <!-- Positive Pin -->
+      <circle cx="20" cy="35" r="5" fill="#ec4899" />
+      <text x="32" y="39" fill="#f472b6" font-size="11" font-weight="600">(+) Signal</text>
+      <text x="32" y="55" fill="#cbd5e1" font-size="10">← ESP32 GPIO 19</text>
+
+      <!-- Ground Pin -->
+      <circle cx="20" cy="75" r="5" fill="#475569" stroke="#94a3b8" stroke-width="1" />
+      <text x="32" y="79" fill="#cbd5e1" font-size="11" font-weight="600">(-) Ground</text>
+      <text x="32" y="93" fill="#cbd5e1" font-size="10">← Common GND</text>
+    </g>
+  </g>
+
+  <!-- ==================== 4. DIRECT INTERCONNECT LINES (NO CROSSOVERS!) ==================== -->
+
+  <!-- Line 1: AS608 TX (Yellow) -> ESP32 RX2 GPIO 16 -->
+  <path d="M 360 175 L 490 375" fill="none" stroke="#eab308" stroke-width="2" marker-end="url(#arrowYellow)" />
+  <text x="390" y="270" fill="#fef08a" font-size="10" font-weight="600">UART RX2</text>
+
+  <!-- Line 2: ESP32 TX2 GPIO 17 -> AS608 RX (Green) -->
+  <path d="M 490 415 L 360 215" fill="none" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)" />
+  <text x="390" y="325" fill="#bbf7d0" font-size="10" font-weight="600">UART TX2</text>
+
+  <!-- Line 3: Reed Sensor Signal -> ESP32 GPIO 4 (Purple) -->
+  <path d="M 360 420 L 490 455" fill="none" stroke="#a855f7" stroke-width="2" marker-end="url(#arrowPurple)" />
+  <text x="390" y="445" fill="#d8b4fe" font-size="10" font-weight="600">GPIO 4</text>
+
+  <!-- Line 4: ESP32 GPIO 23 -> MOSFET Board SIG (Cyan) -->
+  <path d="M 770 375 L 856 150" fill="none" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowCyan)" />
+  <text x="778" y="250" fill="#7dd3fc" font-size="10" font-weight="600">GPIO 23 Trigger</text>
+
+  <!-- Line 5: ESP32 GPIO 19 -> Buzzer (+) Signal (Pink) -->
+  <path d="M 770 415 L 856 480" fill="none" stroke="#ec4899" stroke-width="2.5" marker-end="url(#arrowPink)" />
+  <text x="778" y="455" fill="#f472b6" font-size="10" font-weight="600">GPIO 19 Buzzer</text>
+
+  <!-- ==================== 5. BOTTOM SPECIFICATION & SAFETY BAR ==================== -->
+  <g transform="translate(40, 655)" filter="url(#dropShadow)">
+    <rect width="1180" height="165" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <text x="24" y="28" fill="#f8fafc" font-size="14" font-weight="700">Engineering Notes &amp; Production Safety Guidelines</text>
+
+    <g transform="translate(24, 46)">
+      <!-- Col 1 -->
+      <text x="0" y="16" fill="#38bdf8" font-size="12" font-weight="600">Common Star Ground</text>
+      <text x="0" y="34" fill="#cbd5e1" font-size="11">Always tie the 12V DC power supply ground and</text>
+      <text x="0" y="50" fill="#cbd5e1" font-size="11">ESP32 GND together at a single common star point.</text>
+      <text x="0" y="66" fill="#94a3b8" font-size="10">Prevents ground loop noise from resetting UART.</text>
+
+      <!-- Col 2 -->
+      <text x="380" y="16" fill="#f59e0b" font-size="12" font-weight="600">Solenoid Coil Overheat Safety</text>
+      <text x="380" y="34" fill="#cbd5e1" font-size="11">Door lock solenoids draw 1.5A–2.5A continuous.</text>
+      <text x="380" y="50" fill="#cbd5e1" font-size="11">Strict max pulse limit: 8000ms in config.json.</text>
+      <text x="380" y="66" fill="#94a3b8" font-size="10">Job runner emergency abort immediately turns gate LOW.</text>
+
+      <!-- Col 3 -->
+      <text x="760" y="16" fill="#22c55e" font-size="12" font-weight="600">AS608 Touch Interrupt Optional</text>
+      <text x="760" y="34" fill="#cbd5e1" font-size="11">Standard 4-wire UART runs background periodic scan.</text>
+      <text x="760" y="50" fill="#cbd5e1" font-size="11">Wait-for-finger-lift guarantees 5 distinct physical scans</text>
+      <text x="760" y="66" fill="#94a3b8" font-size="10">during interactive smartphone enrollment flow.</text>
+    </g>
+  </g>
+
+</svg>
