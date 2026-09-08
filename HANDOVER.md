@@ -15,7 +15,15 @@ A production-ready MicroPython MQTT edge slave for ESP32 devices designed to exe
      - `analog_in`: ADC voltage/sensor reader with smoothing.
      - `as608`: Optical UART fingerprint scanner.
 2. **Modular Actions & Job Engine (`src/engine/actions.py`, `src/engine/job_runner.py`)**:
-   - Generic actions targeting components by name (`pulse`, `digital_write`, `delay`, `servo_set`, `read`, `as608_search_event`, `as608_enroll_step`).
+   - Generic actions targeting components by name:
+     - Output / Pin: `pulse`, `digital_write` (alias `write`), `delay` (alias `sleep`), `read`, `pwm_write` (alias `pwm`), `servo_set` (alias `servo`).
+     - Failsafe Lock Control: `lock`, `unlock` (with duration safety clamping).
+     - Fingerprint Scanner: `as608_search` (alias `as608_search_event`), `as608_enroll_step` (alias `as608_enroll`), `as608_wait_finger`, `as608_wait_finger_lift` (alias `as608_wait_lift`), `as608_delete` (aliases `as608_delete_slot`, `delete_slot`), `as608_empty` (alias `as608_clear`), `as608_led` (alias `as608_aura_led`), `as608_capture`, `serial_io`.
+     - Network / Telemetry: `mqtt_publish` (alias `publish`).
+   - Dynamic Custom Action Registration:
+     - Instance decorator: `@app.registry.action("action_name")`
+     - Global class decorator: `@ActionRegistry.custom_action("action_name")`
+     - Discovery helpers: `registry.registered_actions`, `registry.has_action(name)`.
    - Concurrency locking with rejection of overlapping jobs.
    - Emergency abort (`slave/<id>/abort`) that resets all outputs to failsafe off.
 3. **Interactive 5-Sample Fingerprint Protocol (`src/drivers/as608.py`)**:
@@ -30,10 +38,12 @@ A production-ready MicroPython MQTT edge slave for ESP32 devices designed to exe
    - HA Discovery button "Check & Apply OTA" and MQTT topic `slave/<id>/ota/update`.
 5. **Home Assistant Auto-Discovery (`src/ha/discovery.py`)**:
    - Generates discovery payloads for status sensor, routine buttons, abort button, OTA update button, and binary sensors for monitored digital inputs.
-6. **Visual Architecture & Hardware Schematics (`docs/assets/`, `docs/HARDWARE_WIRING.md`)**:
+6. **Visual Architecture & Hardware Schematics (`docs/assets/`, `docs/HARDWARE_WIRING.md`, `docs/HIL_RPI_SETUP.md`)**:
    - `docs/assets/system_architecture.svg`: Complete end-to-end architecture vector diagram.
    - `docs/assets/wiring_door_controller.svg`: Non-crossing centered-NodeMCU star topology schematic for Profile A.
+   - `docs/assets/wiring_pi_hil_test.svg`: Complete 5-signal Raspberry Pi HIL test bench wiring schematic.
    - `docs/HARDWARE_WIRING.md`: Dedicated wiring guide with BOM and electrical safety practices.
+   - `docs/HIL_RPI_SETUP.md`: Comprehensive setup and provisioning guide for Raspberry Pi HIL testing.
 
 ---
 
@@ -47,12 +57,13 @@ source .venv/bin/activate
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Run all tests (28 passing, 6 skipped when HIL Pi is offline)
+# 3. Run all tests (33 passing, 6 skipped when HIL Pi is offline)
 pytest -v tests/
 ```
 
 ### Integration Broker, Simulator & Remote HIL:
 ```bash
+# Start local test broker
 docker compose up -d mosquitto
 pytest -v tests/integration/
 
@@ -70,11 +81,10 @@ python tools/hil_manager.py run
 - `tests/test_components.py`: Validates door, switchbot, and appliance LED profiles.
 - `tests/test_digital_io.py`: Validates input inversion, debouncing, and output pulse.
 - `tests/test_as608.py`: Validates packet checksums, password auth, search, slot delete, and enrollment steps.
-- `tests/test_actions.py`: Validates pulse, servo, digital write, and search actions.
+- `tests/test_actions.py`: Validates all actions, aliases (`write`, `sleep`, `servo`, `pwm`), lock/unlock safety, custom action registration decorators (instance & global), and AS608 extended actions (`as608_led`, `as608_empty`, `delete_slot`).
 - `tests/test_job_runner.py`: Validates routine execution, concurrency locking, and abort safety.
 - `tests/test_ha_discovery.py`: Validates dynamic MQTT discovery payload structure.
 - `tests/test_ota.py`: Validates semantic versioning, staging, atomic replacement, and rollback.
 - `tests/integration/test_door_flow.py`: End-to-end simulation of fingerprint scan -> auth -> solenoid unlock.
 - `tests/integration/test_mqtt_integration.py`: Live Mosquitto LWT, publish/subscribe, and thread-safe async dispatching.
 - `tests/hil/test_pi_hil.py`: Multi-signal Hardware-in-the-Loop suite (solenoid timing, 50Hz PWM duty cycle, digital out switching, digital in stimulus telemetry, AS608 UART packet emulation, and auto-dispatching remote test runner). Setup guide: `docs/HIL_RPI_SETUP.md`.
-

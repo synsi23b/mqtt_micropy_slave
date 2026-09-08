@@ -80,29 +80,88 @@ class ActionExecutionContext:
 class ActionRegistry:
     """Registry mapping action names to async execution handlers."""
 
+    _custom_actions = {}
+
+    @classmethod
+    def register_custom_action(cls, name, handler):
+        """Register a custom action globally across all ActionRegistry instances."""
+        cls._custom_actions[name] = handler
+
+    @classmethod
+    def custom_action(cls, name):
+        """Decorator to register a custom action at class level: @ActionRegistry.custom_action("name")"""
+        def decorator(handler):
+            cls.register_custom_action(name, handler)
+            return handler
+        return decorator
+
     def __init__(self):
         self._actions = {}
         self._register_builtins()
+        # Merge any globally registered custom actions
+        for name, handler in self._custom_actions.items():
+            self._actions[name] = handler
 
     def register(self, name, handler):
         self._actions[name] = handler
 
+    def action(self, name):
+        """Decorator to register a custom action on this registry instance: @registry.action("name")"""
+        def decorator(handler):
+            self.register(name, handler)
+            return handler
+        return decorator
+
     def get(self, name):
         return self._actions.get(name)
 
+    def has_action(self, name):
+        """Return True if action is registered."""
+        return name in self._actions
+
+    @property
+    def registered_actions(self):
+        """Return list of all registered action names."""
+        return sorted(list(self._actions.keys()))
+
     def _register_builtins(self):
+        # Digital / Pin actions & aliases
         self.register("digital_write", self._act_digital_write)
+        self.register("write", self._act_digital_write)
         self.register("pulse", self._act_pulse)
         self.register("read", self._act_read)
         self.register("delay", self._act_delay)
+        self.register("sleep", self._act_delay)
         self.register("pwm_write", self._act_pwm_write)
+        self.register("pwm", self._act_pwm_write)
         self.register("servo_set", self._act_servo_set)
+        self.register("servo", self._act_servo_set)
         self.register("serial_io", self._act_serial_io)
+
+        # Direct Lock / Unlock actions
+        self.register("lock", self._act_lock)
+        self.register("unlock", self._act_unlock)
+
+        # AS608 Fingerprint actions & aliases
         self.register("as608_search", self._act_as608_search)
+        self.register("as608_search_event", self._act_as608_search)
         self.register("as608_enroll_step", self._act_as608_enroll_step)
+        self.register("as608_enroll", self._act_as608_enroll_step)
         self.register("as608_wait_finger_lift", self._act_as608_wait_lift)
+        self.register("as608_wait_lift", self._act_as608_wait_lift)
+        self.register("as608_wait_finger", self._act_as608_wait_finger)
         self.register("as608_delete", self._act_as608_delete)
+        self.register("as608_delete_slot", self._act_as608_delete)
+        self.register("delete_slot", self._act_as608_delete)
+        self.register("as608_empty", self._act_as608_empty)
+        self.register("as608_clear", self._act_as608_empty)
+        self.register("as608_led", self._act_as608_led)
+        self.register("as608_aura_led", self._act_as608_led)
+        self.register("as608_capture", self._act_as608_capture)
+
+        # Network / Communication
         self.register("mqtt_publish", self._act_mqtt_publish)
+        self.register("publish", self._act_mqtt_publish)
 
     async def execute(self, step, context):
         """Execute a single action dictionary using the registry."""
@@ -282,3 +341,65 @@ class ActionRegistry:
         if ctx.mqtt_publish_cb and topic:
             await ctx.mqtt_publish_cb(topic, payload)
         return {"action": "mqtt_publish", "topic": topic}
+
+    async def _act_lock(self, step, ctx):
+        target_id = step.get("target", step.get("pin", "solenoid"))
+        obj = ctx.resolve_target(target_id)
+        if hasattr(obj, "lock"):
+            obj.lock()
+        elif hasattr(obj, "write"):
+            obj.write(0)
+        elif hasattr(obj, "value"):
+            obj.value(0)
+        else:
+            raise ValueError("Target '{}' cannot perform lock".format(target_id))
+        return {"action": "lock", "target": target_id}
+
+    async def _act_unlock(self, step, ctx):
+        target_id = step.get("target", step.get("pin", "solenoid"))
+        duration_ms = step.get("duration_ms", step.get("ms"))
+        obj = ctx.resolve_target(target_id)
+        if hasattr(obj, "unlock"):
+            await obj.unlock(duration_ms=duration_ms)
+        elif hasattr(obj, "pulse"):
+            await obj.pulse(duration_ms=duration_ms or 3000)
+        elif hasattr(obj, "write"):
+            obj.write(1)
+        elif hasattr(obj, "value"):
+            obj.value(1)
+        else:
+            raise ValueError("Target '{}' cannot perform unlock".format(target_id))
+        return {"action": "unlock", "target": target_id, "duration_ms": duration_ms}
+
+    async def _act_as608_wait_finger(self, step, ctx):
+        sensor = ctx.as608
+        if not sensor:
+            raise RuntimeError("AS608 sensor not configured")
+        timeout_s = step.get("timeout_s", 10)
+        detected = await sensor.wait_finger(timeout_s=timeout_s)
+        return {"action": "as608_wait_finger", "detected": detected}
+
+    async def _act_as608_empty(self, step, ctx):
+        sensor = ctx.as608
+        if not sensor:
+            raise RuntimeError("AS608 sensor not configured")
+        ok, err = await sensor.empty_database()
+        return {"action": "as608_empty", "ok": ok, "error": err}
+
+    async def _act_as608_led(self, step, ctx):
+        sensor = ctx.as608
+        if not sensor:
+            raise RuntimeError("AS608 sensor not configured")
+        mode = step.get("mode", 1)
+        speed = step.get("speed", 50)
+        color = step.get("color", 1)
+        count = step.get("count", 0)
+        ok, err = await sensor.set_led(mode=mode, speed=speed, color=color, count=count)
+        return {"action": "as608_led", "ok": ok, "error": err}
+
+    async def _act_as608_capture(self, step, ctx):
+        sensor = ctx.as608
+        if not sensor:
+            raise RuntimeError("AS608 sensor not configured")
+        ok, err = await sensor.capture_image()
+        return {"action": "as608_capture", "ok": ok, "error": err}
